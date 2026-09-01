@@ -1,0 +1,2096 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f0e6"><title>Unser Familienkochbuch</title><style>
+
+:root{
+  --bg:#f3efe7;--paper:#fffdf9;--paper2:#f8f4ec;--text:#211f1a;--muted:#777066;
+  --line:#ddd5c8;--accent:#59634b;--accent-dark:#404938;--warm:#b69065;
+  --chip:#ebe4d8;--shadow:0 14px 34px rgba(48,39,29,.08);--shadow2:0 7px 20px rgba(48,39,29,.07)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:
+radial-gradient(circle at top right,rgba(182,144,101,.09),transparent 26rem),var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+.topbar{position:sticky;top:0;z-index:10;background:rgba(243,239,231,.93);backdrop-filter:blur(14px);border-bottom:1px solid rgba(221,213,200,.9)}
+.wrap{max-width:1220px;margin:auto;padding:20px 24px}
+.brand{display:flex;justify-content:space-between;gap:20px;align-items:flex-end}
+.brand h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:-.025em;font-size:clamp(34px,4vw,54px)}
+.brand p{margin:5px 0 0;color:var(--muted);font-size:16px}
+.brand .badge{margin-bottom:5px}
+.controls{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(210px,.75fr) auto;gap:12px;margin-top:20px;align-items:center}
+input[type=text],select,input[type=number]{width:100%;padding:15px 17px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.92);color:var(--text);outline:none;transition:.15s}
+input[type=text]:focus,select:focus,input[type=number]:focus{border-color:#aaa08f;box-shadow:0 0 0 3px rgba(89,99,75,.09)}
+.toggle{display:flex;gap:9px;align-items:center;white-space:nowrap;padding:0 7px;color:#4f4a43}
+.toggle input{width:20px;height:20px}
+.stats{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:22px 0 18px;color:var(--muted);font-size:15px}
+.stats strong{color:var(--text);font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px;padding-bottom:36px}
+.card{position:relative;overflow:hidden;background:var(--paper);border:1px solid rgba(221,213,200,.9);border-radius:24px;box-shadow:var(--shadow2);cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#cdc3b3}
+.cardvisual{height:255px;padding:0;display:block;background:#e9e2d7;border-bottom:1px solid rgba(221,213,200,.72);overflow:hidden}
+.cardvisual .recipe-thumb{width:100%;height:100%;object-fit:cover;display:block}
+.cardvisual .image-shade,.cardvisual .foodicon,.cardvisual .heart{display:none!important}
+.cardcontent{padding:18px 20px 21px;min-height:86px;display:flex;align-items:center}
+.cardcontent .badge,.cardcontent p,.cardcontent small{display:none!important}
+.card h3{font-family:Georgia,"Times New Roman",serif;font-size:25px;line-height:1.08;letter-spacing:-.015em;margin:0}
+.cardtop,.recipehead{display:flex;justify-content:space-between;align-items:center}
+.badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:var(--chip);font-size:12px;font-weight:700;letter-spacing:.04em;color:#777066}
+.heart{border:0;background:rgba(255,255,255,.58);color:#726b61;font-size:27px;line-height:1;padding:5px 8px;border-radius:999px}
+.heart.on{color:#8a4f49}.heart.big{font-size:34px;background:transparent}
+
+@media(max-width:640px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .card{border-radius:19px}
+  .cardvisual{height:190px}
+  .cardcontent{padding:13px 14px 15px;min-height:70px}
+  .card h3{font-size:20px}
+}
+.overlay{position:fixed;inset:0;background:rgba(33,29,24,.52);display:none;z-index:30;padding:18px;backdrop-filter:blur(3px)}
+.overlay.open{display:flex}
+.panel{margin:auto;max-width:980px;width:100%;max-height:95vh;overflow:auto;background:var(--paper);border:1px solid rgba(255,255,255,.5);border-radius:28px;padding:30px;box-shadow:0 30px 70px rgba(30,25,20,.22)}
+.panel h2{max-width:820px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(36px,5vw,58px);line-height:1.02;letter-spacing:-.025em;margin:12px 0}
+.lead{max-width:780px;font-size:18px;color:var(--muted);line-height:1.55}
+.meta{display:flex;gap:8px;flex-wrap:wrap;color:#5f594f;margin:16px 0 22px}
+.meta span{background:var(--paper2);border:1px solid #e8e0d4;padding:8px 11px;border-radius:999px;font-size:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:17px 0 28px}
+button{border:0;border-radius:14px;padding:13px 16px;background:var(--accent);color:white;font-weight:650;cursor:pointer;transition:.15s}
+button:hover{filter:brightness(.97)}button.secondary{background:var(--chip);color:var(--text)}button:disabled{opacity:.35}
+.recipebody{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.35fr);gap:28px;align-items:start}
+section{margin:26px 0}section h3{font-family:Georgia,"Times New Roman",serif;font-size:27px;margin:0 0 13px}
+.ingredients{list-style:none;padding:0;margin:0;background:var(--paper2);border:1px solid #e5ddd1;border-radius:18px;overflow:hidden}
+.ingredients li{margin:0;padding:11px 13px;border-bottom:1px solid #e7dfd3;line-height:1.35}.ingredients li:last-child{border-bottom:0}
+.ingredients label{display:flex;align-items:flex-start;gap:8px}.ingredients input{width:20px;height:20px;flex:0 0 auto;margin:0;margin-top:1px}
+.ingredients input:checked+span{text-decoration:line-through;opacity:.48}
+.steps{padding:0;list-style:none;margin:0}.steps li{position:relative;margin:0 0 11px;line-height:1.5;padding:16px 50px 16px 17px;background:white;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 13px rgba(50,40,30,.03)}
+.steps b{font-family:Georgia,serif;font-size:18px;color:var(--accent-dark);margin-right:5px}
+.speakmini{position:absolute;right:10px;top:10px;padding:7px 9px;background:var(--chip);color:var(--text);font-size:14px}
+.tip{background:linear-gradient(135deg,#f0e8dc,#f6f1e9);border:1px solid #e2d7c8;border-radius:19px;padding:19px}
+.tip h3{font-size:23px}.source{margin-top:28px;padding-top:17px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+.close{float:right}.cook{font-size:21px}.cook .stepbox{font-family:Georgia,serif;font-size:clamp(29px,4vw,45px);line-height:1.35;background:#fff;border:1px solid var(--line);border-radius:23px;padding:30px;margin:22px 0;box-shadow:var(--shadow2)}
+.compact{font-size:16px}.timerbar{display:flex;gap:10px;align-items:center;margin-top:20px}.timerbar input{max-width:100px}
+details{background:var(--paper2);border:1px solid #e5ddd1;border-radius:16px;padding:15px;margin-top:20px}summary{cursor:pointer;font-weight:700}
+@media(max-width:780px){
+ .wrap{padding:17px 18px}.brand{align-items:flex-start;flex-direction:column;gap:9px}.brand .badge{display:none}
+ .controls{grid-template-columns:1fr;gap:10px}.grid{grid-template-columns:1fr 1fr;gap:12px}
+ .card{min-height:210px;border-radius:21px}.cardvisual{height:75px;padding:12px 14px}.cardvisual .foodicon{width:46px;height:46px;border-radius:15px;font-size:25px}
+ .cardcontent{padding:15px}.card h3{font-size:20px}.card small{margin-top:10px}.panel{padding:20px;border-radius:23px}
+ .recipebody{grid-template-columns:1fr}.panel h2{font-size:36px}.lead{font-size:16px}.actions button{flex:1 1 auto}
+}
+@media(max-width:470px){
+ .grid{grid-template-columns:1fr}.card{min-height:0}.cardvisual{height:72px}.cardcontent{padding:16px 17px}.card h3{font-size:23px}
+}
+@media print{.topbar,.actions,.close,.heart,.speakmini{display:none!important}.overlay{position:static;display:block!important;background:white;padding:0}.panel{max-height:none;box-shadow:none;max-width:none}.wrap{display:none}.recipebody{display:block}}
+
+
+.cardvisual{position:relative;overflow:hidden}
+.cardvisual.hasimg{background:#e9e2d7}
+.cardvisual img.recipe-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.cardvisual .image-shade{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.04),rgba(0,0,0,.18));display:none}
+.cardvisual.hasimg .image-shade{display:block}
+.cardvisual .foodicon,.cardvisual .heart{position:relative;z-index:2}
+.cardvisual.hasimg .foodicon{background:rgba(255,255,255,.84);backdrop-filter:blur(4px)}
+.cardvisual.hasimg .heart{background:rgba(255,255,255,.84);backdrop-filter:blur(4px)}
+.heroimage{width:100%;height:min(42vh,420px);border-radius:22px;overflow:hidden;background:linear-gradient(135deg,rgba(89,99,75,.11),rgba(182,144,101,.11));margin:18px 0 20px;display:none}
+.heroimage.show{display:block}
+.heroimage img{width:100%;height:100%;object-fit:cover;display:block}
+
+
+.topbar{position:relative;background:var(--paper);border-bottom:1px solid var(--line)}
+.topbar .wrap{padding-top:14px;padding-bottom:14px}
+.topbar .brand h1{font-size:28px}
+.topbar .brand p{font-size:13px}
+
+.hero{position:relative;min-height:520px;display:flex;align-items:center;overflow:hidden;background:#2b2a26}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.9) brightness(.78)}
+.heroShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(22,20,17,.72),rgba(22,20,17,.22) 58%,rgba(22,20,17,.12))}
+.heroInner{position:relative;z-index:2;width:min(1120px,calc(100% - 40px));margin:auto;color:#fff}
+.heroKicker{font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;opacity:.85;margin-bottom:14px}
+.hero h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(42px,6vw,72px);line-height:.98;max-width:720px;margin:0 0 16px;letter-spacing:-.035em}
+.hero p{font-size:19px;max-width:620px;margin:0 0 28px;color:rgba(255,255,255,.9)}
+.heroSearch{display:flex;align-items:center;gap:12px;max-width:650px;padding:0 16px;background:#fff;border-radius:18px;box-shadow:0 18px 45px rgba(0,0,0,.2)}
+.heroSearch span{color:#766f64;font-size:24px}
+.heroSearch input{border:0!important;box-shadow:none!important;background:transparent!important;padding:18px 0;font-size:18px}
+
+.homewrap{padding-top:34px}
+.featureSection,.categorySection,.allRecipesSection{margin-bottom:46px}
+.sectionHead{display:flex;justify-content:space-between;align-items:end;margin-bottom:18px}
+.sectionHead h2{font-family:Georgia,"Times New Roman",serif;font-size:34px;letter-spacing:-.02em;margin:2px 0 0}
+.eyebrow{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--warm)}
+.miniCount{color:var(--muted);font-size:14px;font-weight:700}
+
+.featuredGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.featureCard{position:relative;min-height:330px;border-radius:26px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow);background:#ddd}
+.featureCard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.featureCard:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(20,18,15,.72),rgba(20,18,15,.04) 60%)}
+.featureCardContent{position:absolute;z-index:2;left:22px;right:22px;bottom:20px;color:#fff}
+.featureCardContent .badge{background:rgba(255,255,255,.88);color:#534d45}
+.featureCardContent h3{font-family:Georgia,serif;font-size:28px;line-height:1.05;margin:10px 0 6px}
+.featureCardContent p{margin:0;color:rgba(255,255,255,.86);font-size:14px}
+
+.categoryTiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.categoryTile{border:1px solid var(--line);background:var(--paper);border-radius:20px;padding:18px 14px;min-height:120px;cursor:pointer;box-shadow:0 5px 15px rgba(50,40,30,.04);display:flex;flex-direction:column;justify-content:space-between;transition:.15s}
+.categoryTile:hover{transform:translateY(-2px);box-shadow:var(--shadow2)}
+.categoryIcon{font-size:31px}
+.categoryTile strong{font-family:Georgia,serif;font-size:17px;line-height:1.12}
+.categoryTile small{color:var(--muted);margin-top:5px}
+
+.allRecipesSection{padding-top:8px}
+.sectionHeadRecipes{margin-bottom:14px}
+.allRecipesSection .controls{margin-top:0}
+.allRecipesSection .stats{margin-top:12px;margin-bottom:16px}
+
+@media(max-width:900px){
+  .featuredGrid{grid-template-columns:1fr 1fr}
+  .featuredGrid .featureCard:last-child{grid-column:1/-1;min-height:280px}
+  .categoryTiles{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:640px){
+  .hero{min-height:470px}
+  .heroInner{width:calc(100% - 30px)}
+  .hero h2{font-size:44px}
+  .hero p{font-size:16px}
+  .heroSearch input{font-size:16px}
+  .featuredGrid{grid-template-columns:1fr}
+  .featuredGrid .featureCard:last-child{grid-column:auto}
+  .featureCard{min-height:300px}
+  .categoryTiles{grid-template-columns:repeat(2,1fr)}
+  .sectionHead h2{font-size:30px}
+}
+
+</style><!-- Rezeptbilder: images/R001.jpg, images/R002.jpg, ... -->
+</head>
+<body><header class="topbar"><div class="wrap"><div class="brand"><div><h1>Familienkochbuch</h1><p>Unsere Rezepte</p></div><span class="badge">V9</span></div></div></header>
+
+<main>
+  <section class="hero">
+    <img src="images/R003.jpg" alt="Unser Familienkochbuch">
+    <div class="heroShade"></div>
+    <div class="heroInner">
+      <div class="heroKicker">Unser Familienkochbuch</div>
+      <h2>Was wollen wir heute kochen?</h2>
+      <p>Lieblingsrezepte, Klassiker und neue Ideen für unsere Küche.</p>
+      <div class="heroSearch">
+        <span>⌕</span>
+        <input id="heroSearch" type="text" placeholder="Rezept oder Zutat suchen …" autocomplete="off">
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap homewrap">
+    <section class="featureSection">
+      <div class="sectionHead">
+        <div>
+          <span class="eyebrow">Schneller Einstieg</span>
+          <h2>Heute vielleicht …</h2>
+        </div>
+      </div>
+      <div id="featuredGrid" class="featuredGrid"></div>
+    </section>
+
+    <section class="categorySection">
+      <div class="sectionHead">
+        <div>
+          <span class="eyebrow">Entdecken</span>
+          <h2>Kategorien</h2>
+        </div>
+      </div>
+      <div id="categoryTiles" class="categoryTiles"></div>
+    </section>
+
+    <section class="allRecipesSection" id="alle-rezepte">
+      <div class="sectionHead sectionHeadRecipes">
+        <div>
+          <span class="eyebrow">Sammlung</span>
+          <h2>Alle Rezepte</h2>
+        </div>
+        <div class="miniCount" id="count"></div>
+      </div>
+
+      <div class="controls">
+        <input id="search" type="text" placeholder="Rezept, Zutat oder Kategorie suchen …" autocomplete="off">
+        <select id="category"></select>
+        <label class="toggle"><input id="favOnly" type="checkbox"> Nur Favoriten</label>
+      </div>
+
+      <div class="stats"><span>Kochen · Vorlesen · Timer · Favoriten</span></div>
+      <div id="grid" class="grid"></div>
+    </section>
+  </div>
+</main>
+
+<div id="overlay" class="overlay"><div id="detail" class="panel"></div></div>
+<script>
+window.RECIPES = [
+  {
+    "id": "R001",
+    "title": "Wiener Saftgulasch",
+    "category": "Fleisch & Geflügel",
+    "description": "Klassisches Wiener Saftgulasch mit dunkel gerösteten Zwiebeln und langsam geschmortem Rindfleisch.",
+    "servings": "4 Portionen",
+    "prepTime": "ca. 30 Min.",
+    "cookTime": "ca. 3 Std.",
+    "temperature": "kleine Hitze · Herd",
+    "ingredients": [
+      "1 kg Rindergulasch, ideal Wadschinken",
+      "800 g Zwiebeln",
+      "4 Knoblauchzehen",
+      "1 TL gehackter Kümmel",
+      "1 EL Majoran",
+      "4 EL Paprikapulver",
+      "1 EL Weißweinessig",
+      "1 TL Tomatenmark",
+      "Salz",
+      "Pfeffer",
+      "Schweineschmalz oder gutes Öl",
+      "eventuell etwas klare Brühe"
+    ],
+    "steps": [
+      "Zwiebeln schälen und grob würfeln. Das Gulaschfleisch in gewünschte Stücke schneiden.",
+      "Schmalz in einer großen Pfanne erhitzen und die Zwiebeln langsam dunkelbraun rösten. Gegen Ende das Tomatenmark zugeben und kurz mitrösten. Pfanne vom Herd nehmen und die Zwiebeln fein pürieren.",
+      "Knoblauch, Kümmel, Majoran, Paprikapulver und Weißweinessig einrühren. Mit etwas Wasser aufgießen und etwa 30 Minuten einköcheln lassen.",
+      "Erst jetzt das Fleisch einlegen. Bei Bedarf mit wenig klarer Brühe angießen – das Fleisch soll noch sichtbar bleiben. Mit Salz und Pfeffer würzen.",
+      "Bei kleiner Hitze etwa 2–3 Stunden langsam köcheln lassen, bis das Fleisch weich und die Sauce dunkel-rotbraun und sämig ist."
+    ],
+    "tips": [
+      "Nicht zu viel Flüssigkeit zugeben. Die Bindung entsteht aus den lange gerösteten Zwiebeln."
+    ],
+    "source": "Chefkoch – Wiener Saftgulasch wie ich es mache",
+    "tags": [
+      "Gulasch",
+      "Österreichische Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R002",
+    "title": "Saftiger Eierlikörkuchen",
+    "category": "Kuchen & Torten",
+    "description": "Fluffig, unkompliziert und mit besonders saftiger Krume.",
+    "servings": "16 Stücke · Guglhupfform Ø 24 cm",
+    "prepTime": "15 Min.",
+    "cookTime": "45–50 Min.",
+    "temperature": "180 °C Ober-/Unterhitze · mittlere Schiene",
+    "ingredients": [
+      "5 Eier, Größe M, zimmerwarm",
+      "225 g heller Rohrohrzucker oder Haushaltszucker",
+      "250 ml Eierlikör",
+      "250 ml neutrales Öl, z. B. Sonnenblumenöl",
+      "250 g Dinkelmehl Type 630 oder Weizenmehl Type 550",
+      "1 Päckchen Backpulver",
+      "2 TL neutrales Öl für die Form",
+      "2 EL gemahlene Mandeln, Nüsse oder Mandelblättchen für die Form",
+      "2 EL Puderzucker zum Bestäuben"
+    ],
+    "steps": [
+      "Backofen auf 180 °C Ober-/Unterhitze vorheizen. Guglhupfform Ø 24 cm mit Öl ausstreichen und mit Mandeln, Nüssen oder Mandelblättchen ausstreuen.",
+      "Eier und Zucker etwa 5 Minuten sehr fluffig aufschlagen.",
+      "Eierlikör und Öl langsam einlaufen lassen und dabei auf niedriger Stufe weiterschlagen.",
+      "Mehl und Backpulver mischen, über die Masse sieben und mit einem Schneebesen nur kurz unterheben, bis ein homogener Teig entstanden ist.",
+      "Teig in die Form füllen und auf der mittleren Schiene etwa 45–50 Minuten backen. Gegen Ende Stäbchenprobe machen.",
+      "Kuchen aus dem Ofen nehmen. Falls nötig den Rand lösen. Nach etwa 5 Minuten auf ein Kuchengitter stürzen, vollständig auskühlen lassen und mit Puderzucker bestäuben."
+    ],
+    "tips": [
+      "Nicht länger als nötig rühren oder backen. Falls sich der Kuchen nicht löst, ein nasses kaltes Geschirrtuch um die Form wickeln."
+    ],
+    "source": "Maria, es schmeckt mir – Saftiger Eierlikörkuchen",
+    "tags": [
+      "Kuchen",
+      "Kuchen & Mehlspeisen"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R002A",
+    "title": "Eierlikör ohne Kochen",
+    "category": "Getränke & Liköre",
+    "description": "Cremig, vanillig und in wenigen Minuten zusammengerührt.",
+    "servings": "2 Flaschen à ca. 0,75 l",
+    "prepTime": "ca. 10 Min.",
+    "cookTime": "",
+    "temperature": "",
+    "ingredients": [
+      "8 sehr frische Eigelb, möglichst Bio",
+      "250 g Puderzucker, gesiebt",
+      "1 Päckchen Bourbon-Vanillezucker",
+      "1 Vanilleschote oder Vanilleextrakt/-paste",
+      "400 ml Sahne",
+      "250 ml Wodka, 40 % Vol."
+    ],
+    "steps": [
+      "Eigelb mit Puderzucker, Vanillezucker und Vanillemark etwa 5 Minuten dick und cremig aufschlagen.",
+      "Sahne nach und nach zugeben und nochmals einige Minuten kräftig schlagen.",
+      "Wodka langsam mit einem Schneebesen unterrühren.",
+      "In sehr saubere Flaschen füllen, gut verschließen und durchgehend im Kühlschrank lagern. Vor dem Ausgießen bei Bedarf kräftig schütteln."
+    ],
+    "tips": [
+      "Enthält rohe Eigelbe. Nur sehr frische Eier verwenden, stets gekühlt aufbewahren und zügig verbrauchen."
+    ],
+    "source": "Maria, es schmeckt mir – Eierlikör ohne Kochen",
+    "tags": [
+      "Grundrezepte & Getränke"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R003",
+    "title": "Deutscher Käsekuchen mit Quark und Mürbeteig",
+    "category": "Kuchen & Torten",
+    "description": "Knuspriger Mürbeteig, cremige Quarkfüllung und ein Hauch Zitrone.",
+    "servings": "12 Stücke · Springform Ø 26 cm",
+    "prepTime": "ca. 25 Min. + Kühlzeiten",
+    "cookTime": "ca. 60 Min. + Abkühlzeit",
+    "temperature": "190 °C Ober-/Unterhitze",
+    "ingredients": [
+      "250 g Weizenmehl Type 405",
+      "½ Päckchen Backpulver",
+      "50 g gemahlene Mandeln oder Haselnüsse",
+      "60 g Zucker",
+      "1 Päckchen Vanillezucker",
+      "1 Ei, Größe M",
+      "125 g weiche Butter",
+      "2 EL Milch",
+      "1 Prise Salz",
+      "100 g Butter",
+      "1 kg Magerquark",
+      "190 g Zucker",
+      "80 g Mehl",
+      "Mark von 1 Vanilleschote oder 1 TL Vanillepaste",
+      "Abrieb von 1 Bio-Zitrone",
+      "1 Prise Salz",
+      "5 Eier, Größe M",
+      "190 ml Buttermilch"
+    ],
+    "steps": [
+      "Für den Mürbeteig Mehl, Backpulver, Mandeln bzw. Haselnüsse, Zucker, Vanillezucker und Salz mischen. Butter, Ei und Milch zugeben, rasch glatt kneten und 30 Minuten kalt stellen.",
+      "Springform Ø 26 cm fetten und mit Mehl ausstäuben. Teig etwa 5 mm dick ausrollen, Boden und einen ca. 5 cm hohen Rand auskleiden und den Boden mehrfach einstechen. Möglichst nochmals 30 Minuten kalt stellen.",
+      "Backofen auf 190 °C Ober-/Unterhitze vorheizen. 100 g Butter bei niedriger Hitze schmelzen und etwas abkühlen lassen.",
+      "Quark, Mehl, Zucker, Vanille, Zitronenabrieb und Salz verrühren. Eier nacheinander einrühren, jedes etwa 30 Sekunden. Buttermilch nach und nach und zuletzt die flüssige Butter in dünnem Strahl einarbeiten.",
+      "Quarkmasse einfüllen und etwa 60 Minuten backen. Bei zu starker Bräunung gegen Ende abdecken.",
+      "Kuchen nach dem Backen 30 Minuten im ausgeschalteten Ofen bei leicht geöffneter Tür stehen lassen. Danach etwa 1 Stunde in der Form abkühlen lassen.",
+      "Aus der Form lösen und mindestens 6 Stunden abgedeckt im Kühlschrank durchkühlen lassen."
+    ],
+    "tips": [
+      "Eier einzeln einarbeiten und langsam abkühlen lassen – so bleibt die Oberfläche möglichst glatt."
+    ],
+    "source": "Maltes Kitchen – Käsekuchen",
+    "tags": [
+      "Kuchen",
+      "Kuchen & Mehlspeisen"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R004",
+    "title": "Sacher-Torte",
+    "category": "Kuchen & Torten",
+    "description": "Schokolade, Marillenmarmelade und eine spiegelglatte Glasur.",
+    "servings": "Springform Ø 24 cm",
+    "prepTime": "",
+    "cookTime": "ca. 1 Std. + Auskühlen",
+    "temperature": "170 °C · mittlere Schiene",
+    "ingredients": [
+      "130 g dunkle Kuvertüre, mindestens 55 % Kakao",
+      "1 Vanilleschote",
+      "150 g weiche Butter",
+      "100 g Staubzucker",
+      "6 Eier",
+      "100 g Kristallzucker",
+      "140 g Weizenmehl",
+      "Fett und Mehl für die Form",
+      "200 g Marillenmarmelade",
+      "200 g Kristallzucker für die Glasur",
+      "150 g dunkle Kuvertüre, mindestens 55 % Kakao",
+      "125 ml Wasser",
+      "ungesüßtes Schlagobers zum Servieren"
+    ],
+    "steps": [
+      "Backofen auf 170 °C vorheizen. Boden einer Springform Ø 24 cm mit Backpapier auslegen, Rand einfetten und mit Mehl bestäuben. Kuvertüre über dem Wasserbad schmelzen und etwas abkühlen lassen.",
+      "Butter mit Staubzucker und Vanillemark schaumig schlagen. Eier trennen. Eigelbe einzeln einarbeiten, danach die geschmolzene Kuvertüre nach und nach unterrühren.",
+      "Eiweiß mit Kristallzucker steif schlagen. Eischnee auf die Schokoladenmasse geben, Mehl darübersieben und vorsichtig unterheben.",
+      "Teig einfüllen und auf der mittleren Schiene zunächst 10–15 Minuten bei etwa fingerbreit geöffneter Ofentür backen. Danach die Tür schließen und weitere etwa 50 Minuten fertigbacken.",
+      "Springformrand lösen. Kuchen auf ein mit Backpapier belegtes Gitter stürzen und etwa 20 Minuten abkühlen lassen. Papier abziehen, Kuchen wieder wenden und vollständig auskühlen lassen.",
+      "Kuchen waagerecht halbieren. Marillenmarmelade erwärmen, beide Schnittflächen bestreichen, Torte zusammensetzen und auch außen mit Marmelade bestreichen.",
+      "Für die Glasur Zucker mit 125 ml Wasser etwa 5 Minuten stark kochen. Sirup etwas abkühlen lassen. Kuvertüre nach und nach einrühren, bis eine dickflüssige Glasur entsteht.",
+      "Glasur prüfen: Sie soll am Holzkochlöffel etwa 4 mm dick haften. Lauwarm auf einmal über die Torte gießen und zügig verteilen.",
+      "Glasur mehrere Stunden aushärten lassen. Mit ungesüßtem Schlagobers servieren."
+    ],
+    "tips": [
+      "Die Glasur nicht zu heiß verarbeiten, sonst wird sie beim Abkühlen stumpf."
+    ],
+    "source": "Hotel Sacher – Rezept zur Original Sacher-Torte",
+    "tags": [
+      "Torte",
+      "Österreichische Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R005",
+    "title": "Nussstollen",
+    "category": "Kuchen & Torten",
+    "description": "Geflochtener Germteig mit einer schlichten, saftigen Nussfülle.",
+    "servings": "2 Stollen · 2 große Kastenformen",
+    "prepTime": "ca. 30 Min. + 30 Min. Rastzeit",
+    "cookTime": "ca. 25 Min.",
+    "temperature": "180 °C Heißluft",
+    "ingredients": [
+      "250 g lauwarme Milch",
+      "620 g Weizenmehl Type 700",
+      "1 Ei",
+      "70 g Zucker",
+      "42 g frische Germ",
+      "7 g Salz",
+      "100 g zimmerwarme Butter",
+      "125 ml Milch für die Fülle",
+      "2 EL Zucker für die Fülle",
+      "200 g geriebene Nüsse"
+    ],
+    "steps": [
+      "Lauwarme Milch mit dem Ei verrühren. Mehl zugeben und die Germ daraufbröseln. Salz, Zucker und zimmerwarme Butter zufügen und zu einem glatten Teig kneten. Zugedeckt etwa 30 Minuten rasten lassen.",
+      "Für die Fülle Milch und Zucker aufkochen. Geriebene Nüsse einrühren und die Fülle etwas abkühlen lassen.",
+      "Teig in zwei Teile teilen und dünn rechteckig ausrollen. Nussfülle darauf verstreichen und jeweils einrollen.",
+      "Jede Rolle längs in der Mitte durchschneiden und die offenen Teigstränge miteinander verdrehen.",
+      "In zwei große eingefettete Kastenformen legen und bei 180 °C Heißluft etwa 25 Minuten backen."
+    ],
+    "tips": [
+      "Beim nächsten Probebacken prüfen, ob eine zweite Gehzeit nach dem Formen gewünscht ist."
+    ],
+    "source": "Backen mit Christina – Nussstollen",
+    "tags": [
+      "Germgebäck & Weihnachten"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R006",
+    "title": "Topfentorte – der österreichische Klassiker",
+    "category": "Kuchen & Torten",
+    "description": "Feiner Biskuit, cremige Topfenfüllung und eine frische Zitrusnote.",
+    "servings": "Springform Ø 24 cm oder Tortenring",
+    "prepTime": "35 Min.",
+    "cookTime": "20–25 Min.",
+    "temperature": "170 °C Ober-/Unterhitze",
+    "ingredients": [
+      "4 Eier, Größe M",
+      "120 g Kristallzucker",
+      "150 g Kuchenmehl",
+      "40 g Öl",
+      "6 Blatt Gelatine",
+      "250 g Schlagobers",
+      "Saft einer Orange",
+      "500 g Topfen, 20 %",
+      "150 g Staubzucker",
+      "Schale und Saft einer Zitrone",
+      "Staubzucker zum Servieren"
+    ],
+    "steps": [
+      "Backofen auf 170 °C Ober-/Unterhitze vorheizen. Springform Ø 24 cm oder Tortenring vorbereiten.",
+      "Eier trennen. Eiweiß mit einer Prise Zucker und Salz cremig, aber nicht schnittfest aufschlagen. Eigelb und Zucker hell aufschlagen und den Eischnee vorsichtig unterheben.",
+      "Gesiebtes Kuchenmehl portionsweise unterheben und zum Schluss das Öl einrühren.",
+      "Teig in die Form füllen und 20–25 Minuten backen. Anschließend vollständig auskühlen lassen.",
+      "Gelatine einweichen. Schlagobers steif schlagen.",
+      "Topfen, Staubzucker sowie Zitronenschale, Zitronensaft und Orangensaft verrühren.",
+      "Gelatine im leicht erwärmten Orangensaft auflösen. Einige Löffel Topfencreme einrühren, anschließend mit der restlichen Creme vermengen.",
+      "Schlagobers vorsichtig unterheben.",
+      "Biskuit waagerecht halbieren. Unteren Boden in einen Tortenring legen, Creme darauf verteilen, zweiten Boden auflegen und leicht andrücken.",
+      "Mindestens 6 Stunden, besser über Nacht, im Kühlschrank fest werden lassen. Vor dem Servieren mit Staubzucker bestäuben."
+    ],
+    "tips": [
+      "Gelatine niemals direkt in die kalte Creme geben; zuerst mit etwas Creme angleichen.",
+      "Zum Halbieren eignet sich ein langes Brot- oder Tortenmesser."
+    ],
+    "source": "Mann backt – Topfentorte",
+    "tags": [
+      "Torte",
+      "Österreichische Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R007",
+    "title": "Wiener Tafelspitz",
+    "category": "Fleisch & Geflügel",
+    "description": "Zart gekochtes Rindfleisch mit Bratkartoffeln und Meerrettichsoße – davor Frittatensuppe.",
+    "servings": "4–6 Personen",
+    "prepTime": "",
+    "cookTime": "ca. 2–3 Std.",
+    "temperature": "sanfte Hitze · Herd",
+    "ingredients": [
+      "3–4 l Wasser",
+      "1 kg Tafelspitz",
+      "½ kg Rindsknochen",
+      "8 Markknochen",
+      "2 ganze Zwiebeln",
+      "2 Karotten",
+      "2 gelbe Rüben",
+      "2 Peterwurzen",
+      "¼ Sellerie",
+      "½ Stange Lauch",
+      "1 Knoblauchzehe",
+      "4 Lorbeerblätter",
+      "1 Bund Petersilie",
+      "1 kleiner Bund Liebstöckl",
+      "1 TL Butterschmalz",
+      "Schwarzbrot",
+      "Pfeffer",
+      "Wacholderbeeren"
+    ],
+    "steps": [
+      "Rindsknochen in kochendem Wasser blanchieren, abseihen und kalt abschrecken. Danach erneut mit kaltem Wasser ansetzen.",
+      "Wasser aufkochen und erst dann den Tafelspitz zugeben. Bei sanfter Hitze weich kochen. Schaum und Fett regelmäßig abschöpfen.",
+      "Gemüse putzen und in Stücke schneiden. Zwiebeln halbieren und in einer Pfanne ohne Fett auf der Schnittfläche sehr dunkel bis schwarz anrösten.",
+      "Sobald sich im Suppentopf kein Schaum mehr bildet, Gemüse und die übrigen Zutaten zugeben – Knoblauch und Markknochen ausgenommen.",
+      "Nach etwa 2–3 Stunden die Suppe abseihen und salzen. Tafelspitz und Suppengemüse schneiden.",
+      "Markknochen separat blanchieren, abseihen und das Knochenmark herauslösen.",
+      "Geschnittenes Gemüse und Tafelspitz in der Suppe nochmals erhitzen.",
+      "Schwarzbrot etwa 1 cm dick schneiden, in etwas Butterschmalz anrösten, mit Knoblauch einreiben und mit Knochenmark belegen.",
+      "Mit Rösti, Apfelkren, Schnittlauchsauce und Markbrot servieren."
+    ],
+    "tips": [
+      "Die Suppe nur sanft köcheln lassen, damit sie klar bleibt."
+    ],
+    "source": "Figlmüller – Der Wiener Tafelspitz",
+    "tags": [
+      "Österreichische Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R008",
+    "title": "Walnuss-Birnen-Kuchen",
+    "category": "Kuchen & Torten",
+    "description": "Saftiger Buchweizenteig mit pochierten Birnen, Kardamom und karamellisierten Walnüssen.",
+    "servings": "Kastenform 25–27 × 11 cm",
+    "prepTime": "",
+    "cookTime": "30–40 Min.",
+    "temperature": "180 °C Ober-/Unterhitze",
+    "ingredients": [
+      "3–4 Birnen",
+      "1 Vanilleschote",
+      "½ TL Kardamom",
+      "¼ TL Zimtzucker",
+      "200 ml Wasser",
+      "Zucker für den Pochiersud",
+      "100 g weiche Butter",
+      "120 g Zucker",
+      "3 Bio-Eier, zimmerwarm",
+      "100 g Walnüsse, grob gehackt",
+      "100 g Buchweizenmehl",
+      "½ Päckchen Backpulver",
+      "1 Apfel oder 1 Birne, geschält und grob gerieben",
+      "1 TL Kardamom",
+      "½ TL Zimt",
+      "einige schöne Walnüsse",
+      "Puderzucker",
+      "heller Zuckerrübensirup",
+      "40 g Butter",
+      "geschlagene Sahne zum Servieren"
+    ],
+    "steps": [
+      "Vanilleschote samt Mark mit Zucker und 200 ml Wasser aufkochen. Geschälte Birnen einlegen und etwa 25 Minuten sanft pochieren, dabei öfter wenden. Abkühlen lassen und mit Kardamom und Zimtzucker bestreuen.",
+      "Backofen auf 180 °C Ober-/Unterhitze vorheizen. Weiche Butter mit der Hälfte des Zuckers cremig schlagen. Eier trennen und Eigelbe nach und nach einarbeiten.",
+      "Grob gehackte Walnüsse kurz untermischen. Mehl mit Backpulver vermengen und nur kurz einarbeiten. Geriebenen Apfel oder Birne zugeben.",
+      "Eiweiß mit der zweiten Hälfte des Zuckers steif schlagen und vorsichtig unterheben. Teig in die mit Backpapier ausgelegte Kastenform geben. Pochierte Birnen dicht nebeneinander in den Teig drücken.",
+      "30–40 Minuten backen. Gegen Ende Stäbchenprobe machen. Falls die Birnen kippen, in der ersten Backphase vorsichtig wieder aufrichten.",
+      "Walnüsse ohne Fett rösten. Etwa 3 EL Zuckerrübensirup erhitzen, Walnüsse kurz darin köcheln lassen und Butter zufügen. Auf Backpapier verteilen und etwa 10 Minuten mit in den Ofen geben.",
+      "Kuchen auskühlen lassen. Mulden um die Birnen mit restlichem Karamell füllen, mit karamellisierten Walnüssen belegen und mit Puderzucker bestäuben."
+    ],
+    "tips": [
+      "Feste Birnen behalten beim Pochieren besser ihre Form."
+    ],
+    "source": "S-Küche – Walnuss-Birnen-Kuchen",
+    "tags": [
+      "Kuchen",
+      "Kuchen & Mehlspeisen"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R009",
+    "title": "Zwetschgendatschi",
+    "category": "Kuchen & Torten",
+    "description": "Dünner Hefeteig ohne Ei, dicht belegt mit saftigen Zwetschgen und Zimtzucker.",
+    "servings": "1 Backblech · ca. 24 Stücke",
+    "prepTime": "ca. 1 Std. + 1 Std. Gehzeit",
+    "cookTime": "30–35 Min.",
+    "temperature": "190 °C Ober-/Unterhitze · mittlere Schiene",
+    "ingredients": [
+      "350 g helles Weizenmehl",
+      "½ Würfel frische Hefe, ca. 20 g, oder 1 Päckchen Trockenhefe",
+      "1 TL Zucker für den Vorteig",
+      "50 g Zucker",
+      "70 g sehr weiche Butter",
+      "ca. 160 ml lauwarme Milch",
+      "1 Prise Salz",
+      "ca. 1.300 g Zwetschgen",
+      "1–2 EL Zucker",
+      "1 TL Zimt",
+      "optional für Streusel: 150 g Mehl, 80 g Zucker, 1 Päckchen Vanillezucker, 100 g sehr weiche Butter, 1 kleine Prise Zimt"
+    ],
+    "steps": [
+      "Mehl in eine Schüssel geben und eine Mulde formen. Frische Hefe hineinbröseln, 1 TL Zucker, etwas lauwarme Milch und Mehl vom Rand zu einem Vorteig verrühren. Abgedeckt etwa 15 Minuten gehen lassen. Bei Trockenhefe entfällt dieser Schritt.",
+      "Vorteig mit 50 g Zucker, Butter, restlicher Milch und Salz zu einem glatten, glänzenden Teig kneten. Falls nötig 1 EL zusätzliche Milch einarbeiten.",
+      "Teig in Blechgröße ausrollen, auf ein gefettetes oder mit Backpapier belegtes Blech legen, kleinen Rand hochdrücken und abgedeckt weitere 45 Minuten gehen lassen.",
+      "Zwetschgen waschen, halbieren, entsteinen und jede Hälfte längs nochmals einschneiden, aber nicht ganz durchtrennen.",
+      "Optional Streusel aus Mehl, Zucker, Vanillezucker, Butter und Zimt herstellen.",
+      "Backofen auf 190 °C Ober-/Unterhitze vorheizen. Zwetschgen dachziegelartig mit der Hautseite nach unten dicht auflegen und leicht eindrücken. Mit Zucker und Zimt und optional Streuseln bestreuen.",
+      "Auf der mittleren Schiene 30–35 Minuten backen, bis die Ränder goldbraun sind. Ohne Streusel direkt nach dem Backen mit Vanillezucker bestreuen."
+    ],
+    "tips": [
+      "Unsere Familienversion verwendet etwas mehr Zucker im Boden; der Teig bleibt trotzdem dünn und fruchtbetont."
+    ],
+    "source": "Maria, es schmeckt mir – Zwetschgendatschi",
+    "tags": [
+      "Kuchen & Mehlspeisen"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R010",
+    "title": "Vorarlberger Käsespätzle",
+    "category": "Pasta, Pizza & Teigwaren",
+    "description": "Handgemachte Spätzle mit würzigem Bergkäse, Rässkäse und goldenen Röstzwiebeln.",
+    "servings": "4 Portionen",
+    "prepTime": "ca. 25 Min.",
+    "cookTime": "ca. 25 Min.",
+    "temperature": "Herd",
+    "ingredients": [
+      "500 g glattes Mehl, Type 480",
+      "6 Eier, Größe M",
+      "150 ml Milch",
+      "1 Prise Salz",
+      "1 Prise schwarzer Pfeffer",
+      "1 Prise Muskatnuss",
+      "250 g Bergkäse, frisch gerieben",
+      "150 g Rässkäse oder Emmentaler, frisch gerieben",
+      "½ Bund Schnittlauch",
+      "1 EL Butter oder Butterschmalz",
+      "1 große Zwiebel"
+    ],
+    "steps": [
+      "Mehl, Eier und Milch mit dem Kochlöffel vermischen. Der Teig soll zähflüssig sein. Mit Salz, Pfeffer und Muskat würzen und 10 Minuten ruhen lassen.",
+      "Zwiebel in feine Ringe oder Halbringe schneiden und in Butter oder Butterschmalz bei mittlerer Hitze 10–15 Minuten langsam goldbraun braten. Auf Küchenpapier abtropfen lassen.",
+      "Salzwasser aufkochen. Teig durch Spätzlesieb oder -hobel ins Wasser geben. Sobald die Spätzle an der Oberfläche schwimmen, herausheben.",
+      "Frisch geriebenen Käse sofort unter die noch heißen Spätzle mischen, bis er schmilzt und Fäden zieht.",
+      "Mit Röstzwiebeln und fein gehacktem Schnittlauch servieren."
+    ],
+    "tips": [
+      "Für echten Vorarlberger Geschmack möglichst Alpkäse und Rässkäse verwenden."
+    ],
+    "source": "GuteKueche – Vorarlberger Käsespätzle",
+    "tags": [
+      "Österreichische Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R011",
+    "title": "Topfenknödel mit Marillenröster",
+    "category": "Desserts & Süßspeisen",
+    "description": "Weiche Topfennockerl in knusprigen Butter-Nuss-Bröseln mit warmen Beeren.",
+    "servings": "4 Personen · ca. 12–14 Knödel",
+    "prepTime": "30 Min. + 30 Min. Kühlzeit",
+    "cookTime": "ca. 30 Min.",
+    "temperature": "Herd · knapp unter dem Siedepunkt",
+    "ingredients": [
+      "250 g Quark/Topfen, 20 % Fett, gut abgetropft",
+      "30 g weiche Butter",
+      "25 g Zucker",
+      "1 Päckchen Vanillezucker",
+      "1 Ei, Größe M",
+      "1 EL Rum",
+      "1 EL Zitronensaft",
+      "80 g Semmelbrösel",
+      "1 TL Zucker fürs Kochwasser",
+      "50 g Semmelbrösel",
+      "30 g geriebene Haselnüsse",
+      "1 EL Zucker",
+      "30 g Butter",
+      "250 g Marillen/Aprikosen",
+      "1 EL weißer Zucker",
+      "125 ml Apfelsaft",
+      "1 Prise Zimt",
+      "1 TL Vanillezucker",
+      "Saft und Schale von ½ Zitrone",
+      "½ TL Speisestärke",
+      "1 EL Apfelsaft zum Anrühren"
+    ],
+    "steps": [
+      "Topfen gut abtropfen lassen oder in einem sauberen Geschirrtuch ausdrücken.",
+      "Butter mit Zucker und Vanillezucker schaumig rühren. Ei, Topfen, Rum und Zitronensaft einarbeiten. Semmelbrösel unterrühren und die Masse 30 Minuten kalt stellen.",
+      "Mit angefeuchteten Händen 12–14 Knödel von etwa 25–30 g formen.",
+      "Wasser aufkochen und 1 TL Zucker zugeben. Knödel einlegen und zugedeckt bei schwacher Hitze 8–10 Minuten knapp unter dem Siedepunkt ziehen lassen.",
+      "Für die Nussbrösel Butter schmelzen. Semmelbrösel, Haselnüsse und Zucker bei mittlerer Hitze goldbraun rösten.",
+      "Für den Marillenröster Marillen vierteln. Zucker goldgelb karamellisieren und mit 125 ml Apfelsaft ablöschen. Nicht sofort umrühren, sondern warten, bis sich der Karamell gelöst hat. Zimt, Vanillezucker, Zitronensaft und -schale zugeben.",
+      "Speisestärke mit 1 EL Apfelsaft glatt rühren, einrühren und kurz aufkochen. Marillen zugeben und etwa 5 Minuten leise simmern lassen.",
+      "Knödel abtropfen lassen, in Nussbröseln wälzen und auf dem Marillenröster anrichten."
+    ],
+    "tips": [
+      "Das Wasser darf nur wallen, nicht sprudelnd kochen."
+    ],
+    "source": "Maria, es schmeckt mir – Topfenknödel",
+    "tags": [
+      "Süße Hauptspeisen"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R012",
+    "title": "Knuspriger Schweinebauch aus dem Ofen",
+    "category": "Fleisch & Geflügel",
+    "description": "Butterzartes Fleisch mit tiefgoldener, aufgepoppter Schwarte aus dem Ofen.",
+    "servings": "3 Portionen",
+    "prepTime": "10 Min.",
+    "cookTime": "ca. 2 Std. 50 Min.",
+    "temperature": "180 °C Ober-/Unterhitze, danach 220 °C",
+    "ingredients": [
+      "1 kg Schweinebauch mit Schwarte, möglichst ohne Knochen",
+      "4 TL grobes Meersalz",
+      "100 ml Weißwein, Bier oder Rotwein",
+      "2 Lorbeerblätter",
+      "1 TL schwarze Pfefferkörner",
+      "½ TL Wacholderbeeren",
+      "3 Knoblauchzehen",
+      "Wasser"
+    ],
+    "steps": [
+      "Schweinebauch waschen und trocken tupfen. Schwarte schachbrettartig einschneiden, ohne ins Fleisch zu schneiden.",
+      "Schwarte kräftig mit grobem Meersalz einreiben. Fleischseite nach unten in einen Bräter setzen. Wein, Bier oder Rotwein, Lorbeer, Pfeffer, Wacholder und Knoblauch zugeben. Mit Wasser auffüllen, bis das Fleisch fast bedeckt ist. Die Schwarte muss trocken bleiben.",
+      "Backofen auf 180 °C Ober-/Unterhitze vorheizen. Schweinebauch zunächst insgesamt 2½ Stunden garen. Nach 1 Stunde grobe Salzkörner von der Schwarte entfernen oder in den Fond schieben und das Fleisch einmal mit Fond übergießen.",
+      "Nach insgesamt 2½ Stunden auf 220 °C Ober-/Unterhitze erhöhen und weitere 20–30 Minuten garen, bis die Schwarte knusprig aufgepoppt ist. Jetzt nicht mehr übergießen.",
+      "Im ausgeschalteten Ofen bei geöffneter Tür etwa 5 Minuten ruhen lassen und anschließend aufschneiden."
+    ],
+    "tips": [
+      "Die Schwarte muss während des Schmorens trocken bleiben."
+    ],
+    "source": "Tastybits – Knuspriger Schweinebauch aus dem Ofen",
+    "tags": [
+      "Fleisch & Ofengerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R013",
+    "title": "Caesar-Salad-Dressing",
+    "category": "Salate & Vorspeisen",
+    "description": "Knackiger Romana, goldene Croûtons, Parmesan und würzig-cremiges Caesar-Dressing.",
+    "servings": "4 Portionen",
+    "prepTime": "10 Min.",
+    "cookTime": "",
+    "temperature": "",
+    "ingredients": [
+      "100 g Mayonnaise",
+      "2 EL Olivenöl",
+      "20 g geriebener Parmesan",
+      "1 EL Zitronensaft",
+      "1 TL Senf",
+      "½ TL Worcestersauce",
+      "1 Knoblauchzehe",
+      "2 eingelegte Anchovis",
+      "Salz",
+      "Pfeffer",
+      "bei Bedarf 1–2 EL Wasser"
+    ],
+    "steps": [
+      "Alle Zutaten mit Mixer oder Pürierstab zu einem feinen cremigen Dressing pürieren.",
+      "Mit Salz und Pfeffer abschmecken. Falls das Dressing zu dick ist, 1–2 EL Wasser einrühren.",
+      "Ohne Mixer Knoblauch sehr fein hacken oder pressen, Anchovis sehr klein schneiden bzw. zerdrücken und mit den übrigen Zutaten gründlich verrühren."
+    ],
+    "tips": [
+      "Für kräftigeren Anchovi-Geschmack die Menge erhöhen. Salat vor dem Vermengen gut trocken schleudern."
+    ],
+    "source": "Habe ich selbstgemacht – Caesar Salad Dressing",
+    "tags": [
+      "Salate & Dressings"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R014",
+    "title": "Klassisches Bœuf Stroganoff",
+    "category": "Fleisch & Geflügel",
+    "description": "Zarte Rinderfiletstreifen in cremiger Sauce mit Champignons, Cornichons und Senf.",
+    "servings": "4 Portionen",
+    "prepTime": "15 Min.",
+    "cookTime": "20 Min.",
+    "temperature": "Herd",
+    "ingredients": [
+      "500 g Rinderfilet",
+      "1 mittelgroße Zwiebel",
+      "250 g Champignons",
+      "100 g Gewürzgurken",
+      "2 EL hocherhitzbares Öl",
+      "200 ml Schmand oder saure Sahne",
+      "150 ml Weißwein",
+      "150 ml Rinderfond",
+      "1 TL scharfer Senf",
+      "1 TL Tomatenmark",
+      "Salz",
+      "Pfeffer",
+      "250 g Bandnudeln",
+      "1 EL frische Petersilie"
+    ],
+    "steps": [
+      "Rinderfilet in etwa 1 cm dicke Streifen schneiden. Zwiebel würfeln, Champignons und Gewürzgurken in Scheiben schneiden.",
+      "Öl stark erhitzen. Rinderfiletstreifen von beiden Seiten jeweils etwa 1 Minute scharf anbraten und sofort herausnehmen.",
+      "Zwiebeln und Champignons kräftig anbraten. Mit Schmand, Weißwein und Rinderfond ablöschen. Senf und Tomatenmark einrühren und würzen.",
+      "Sauce etwa 15 Minuten köcheln lassen. Bei Bedarf mit etwas Nudelwasser verdünnen oder mit wenig angerührtem Mehl/Saucenbinder leicht binden.",
+      "Bandnudeln parallel al dente kochen.",
+      "Gewürzgurken und Rinderfilet erst ganz am Ende in die Sauce geben und nur kurz erwärmen. Mit Bandnudeln und Petersilie servieren."
+    ],
+    "tips": [
+      "Fleisch nur kurz braten und erst ganz am Ende zurück in die Sauce geben."
+    ],
+    "source": "Habe ich selbstgemacht – Klassisches Bœuf Stroganoff",
+    "tags": [
+      "Fleisch & Pfannengerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R015",
+    "title": "Gebackene Risotto-Bällchen",
+    "category": "Salate & Vorspeisen",
+    "description": "Goldbraune Reisbällchen mit Kräutern und schmelzendem Büffelmozzarella.",
+    "servings": "4 Portionen",
+    "prepTime": "60–120 Min. Kühlen",
+    "cookTime": "ca. 35 Min.",
+    "temperature": "Herd · Ausbacken in Öl",
+    "ingredients": [
+      "2 Schalotten",
+      "1 Knoblauchzehe",
+      "25 g Butter",
+      "300 g Risotto-Reis",
+      "150 ml Weißwein",
+      "700 ml Gemüsebrühe",
+      "je 2–3 Stiele Basilikum, Petersilie und Oregano",
+      "50 g geriebener Parmesan",
+      "Salz",
+      "Pfeffer",
+      "250 g Büffel-Mozzarella",
+      "3–4 EL Mehl",
+      "2 Eier",
+      "200 g Semmelbrösel",
+      "ca. 500 ml Sonnenblumenöl"
+    ],
+    "steps": [
+      "Schalotten und Knoblauch fein würfeln und in Butter glasig dünsten. Reis zugeben und kurz mitdünsten. Mit Weißwein und Gemüsebrühe wie Risotto garen.",
+      "Kräuter fein hacken. Parmesan unter den garen Reis rühren, mit Salz und Pfeffer abschmecken und Kräuter untermischen. Risotto vollständig erkalten lassen.",
+      "Mozzarella in 1–2 cm große Würfel schneiden. Je einen Würfel mit Reismasse ummanteln und mit angefeuchteten Händen Bällchen formen.",
+      "Bällchen zuerst in Mehl, dann in verquirltem Ei und zuletzt in Semmelbröseln panieren.",
+      "Sonnenblumenöl erhitzen und die Bällchen portionsweise etwa 1 Minute goldbraun und knusprig ausbacken. Auf Küchenpapier abtropfen lassen."
+    ],
+    "tips": [
+      "Das Risotto muss vollständig kalt sein, damit die Bällchen stabil bleiben."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Reis & kleine Gerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R019",
+    "title": "Limoncello",
+    "category": "Getränke & Liköre",
+    "description": "Leuchtend gelber Zitronenlikör mit intensivem Schalenaroma.",
+    "servings": "2 Flaschen à ca. 0,75 l",
+    "prepTime": "40 Min.",
+    "cookTime": "10 Tage Ziehzeit + mind. 14 Tage Reifezeit",
+    "temperature": "",
+    "ingredients": [
+      "6 Bio-Zitronen",
+      "500 ml 90-prozentiger Alkohol",
+      "400 g Zucker",
+      "750 ml Wasser"
+    ],
+    "steps": [
+      "5 Zitronen heiß abwaschen. Schale mit einem Sparschäler fein abschneiden. Schalen mit Alkohol in einer sauberen, ausgekochten und gut verschlossenen Flasche etwa 10 Tage ziehen lassen.",
+      "Die übrige Zitrone auspressen. Zucker mit 750 ml Wasser und dem Zitronensaft aufkochen und etwa 10 Minuten leicht sämig einkochen lassen.",
+      "Zitronenalkohol durch ein Sieb passieren und mit dem Zuckersirup verrühren.",
+      "In saubere Flaschen füllen, gut verschließen und kühl lagern. Mindestens 14 Tage reifen lassen und die Flaschen gelegentlich wenden."
+    ],
+    "tips": [
+      "Je länger der Limoncello reift, desto milder wird er."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Grundrezepte & Getränke"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R021",
+    "title": "Rinderroulade „alte Schule“",
+    "category": "Fleisch & Geflügel",
+    "description": "Klassisch mit Senf, Speck und Cornichons gefüllt und langsam geschmort.",
+    "servings": "4 Portionen",
+    "prepTime": "30 Min.",
+    "cookTime": "ca. 140 Min.",
+    "temperature": "Herd · zugedeckt schmoren",
+    "ingredients": [
+      "4 Rinderrouladen, je ca. 200 g",
+      "2 EL scharfer Senf",
+      "8 Scheiben durchwachsener Speck",
+      "8 Cornichons",
+      "1 Gemüsezwiebel",
+      "4 EL Mehl",
+      "5 EL Öl",
+      "2 TL Zucker",
+      "1 EL Tomatenmark",
+      "150 ml trockener Weißwein",
+      "400 ml Rinderbrühe",
+      "1 Bund Petersilie",
+      "1 EL Kapern"
+    ],
+    "steps": [
+      "Rouladen flach klopfen, mit Senf bestreichen und jeweils mit 1 Scheibe Speck und 1 Cornichon belegen. Seiten einschlagen, aufrollen und mit Spießen feststecken. Zwiebel in Streifen schneiden.",
+      "Rouladen in Mehl wenden und in 4 EL Öl rundum kräftig anbraten. Herausheben.",
+      "Zwiebeln im Bratfett goldbraun braten, mit Zucker bestreuen und kurz schmoren. Tomatenmark mitrösten. Weißwein angießen und aufkochen, dann Rinderbrühe zugeben und erneut aufkochen.",
+      "Rouladen wieder einlegen und zugedeckt etwa 2 Stunden schmoren.",
+      "Übrigen Speck würfeln und im restlichen Öl knusprig braten. Petersilie hacken. Übrige Cornichons halbieren und in Scheiben schneiden. Gurken und Kapern zum Speck geben und durchschwenken.",
+      "Spieße entfernen. Rouladen mit Sauce und der Gurken-Speck-Kapern-Mischung servieren."
+    ],
+    "tips": [
+      "Dazu passen Petersilienkartoffeln oder Spiralnudeln."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Fleisch & Schmorgerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R022",
+    "title": "Salzburger Nockerln mit Frischekick",
+    "category": "Desserts & Süßspeisen",
+    "description": "Luftige Nockerln mit Zitronengras, Ingwer und Mandelkrokant.",
+    "servings": "4 Portionen",
+    "prepTime": "ca. 50 Min.",
+    "cookTime": "8–10 Min.",
+    "temperature": "250 °C · keine Umluft",
+    "ingredients": [
+      "2 Stiele Zitronengras",
+      "250 ml Milch",
+      "3 EL Mandelblättchen",
+      "2 EL Puderzucker plus etwas zum Bestäuben",
+      "50 g Butter",
+      "7 Eier, Größe M",
+      "Salz",
+      "70 g Zucker",
+      "1 Stück frischer Ingwer, ca. 5 cm",
+      "1 EL Mehl",
+      "1 EL Speisestärke"
+    ],
+    "steps": [
+      "Zitronengras in Stücke schneiden und plattieren. Mit der Milch erhitzen und etwa 10 Minuten ziehen lassen. Mandelblättchen rösten, mit Puderzucker bestäuben und goldgelb karamellisieren. Auf Backpapier auskühlen lassen.",
+      "Backofen auf 250 °C vorheizen; Umluft ist nicht geeignet. Zitronengras aus der Milch nehmen. Milch in eine flache längliche Auflaufform geben, Butter darin schmelzen lassen und die Form in den Ofen schieben.",
+      "Eier trennen. Eiweiß cremig aufschlagen, 1 Prise Salz und nach und nach den Zucker zugeben und zu steifem Eischnee schlagen.",
+      "Ingwer fein reiben. Eigelbe und Ingwer verrühren und zum Eischnee geben. Mehl und Speisestärke mischen, darübersieben und nur kurz unterheben.",
+      "Masse in 4–6 großen Portionen nebeneinander auf die heiße Aromamilch setzen, sodass die Milch bedeckt ist.",
+      "8–10 Minuten goldgelb gratinieren. Mit Puderzucker bestäuben und mit Mandelkaramell servieren."
+    ],
+    "tips": [
+      "Dazu passt Kirschkompott."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Süßes & Desserts"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R024",
+    "title": "Geschmorte Rippchen mit Currygurken",
+    "category": "Fleisch & Geflügel",
+    "description": "Zarte Schweinerippchen mit Schwarzbiersauce und pikanter Gurken-Zwiebel-Garnitur.",
+    "servings": "4 Personen",
+    "prepTime": "20 Min.",
+    "cookTime": "ca. 120 Min.",
+    "temperature": "250 °C vorheizen, danach 180 °C · zugedeckt schmoren",
+    "ingredients": [
+      "2 kg Schweinerippchen",
+      "Olivenöl zum Anbraten und Andünsten",
+      "3 weiße Zwiebeln, in Streifen",
+      "2 Knoblauchzehen, ohne Keim, in Scheiben",
+      "1 EL getrockneter Kümmel",
+      "1 EL Koriandersamen",
+      "1 EL Nelken",
+      "1 TL Oregano",
+      "1 TL Paprikapulver, rosenscharf",
+      "1 TL geräuchertes Paprikapulver, edelsüß",
+      "Salz",
+      "Pfeffer",
+      "1 TL Honig",
+      "750 ml Weißbier",
+      "2 rote Zwiebeln, in Ringen",
+      "1 Salatgurke, geschält, entkernt, in ca. 1 cm dicken Scheiben",
+      "1 EL mildes Currypulver",
+      "½ Bund Thai-Basilikum, fein geschnitten",
+      "Saft von 1 Limone",
+      "bei Bedarf etwas Stärke zum Binden"
+    ],
+    "steps": [
+      "Backofen auf 250 °C vorheizen und darin einen ausreichend großen Bräter erhitzen.",
+      "Rippchen mit etwas Olivenöl im heißen Bräter rundum anbraten. Herausnehmen und beiseitestellen.",
+      "Weiße Zwiebeln und Knoblauch im Bratfett kurz glasig braten. Kümmel, Koriandersamen, Nelken, Oregano, beide Paprikapulver, Salz, Pfeffer und Honig zugeben und kurz mitrösten.",
+      "Mit Weißbier ablöschen. Ofentemperatur auf 180 °C reduzieren, Rippchen wieder in den Bräter geben und fest zugedeckt etwa 90 Minuten schmoren, bis sie weich sind.",
+      "Rippchen herausnehmen und warm halten. Sauce in einen Topf passieren, bei Bedarf etwas einkochen und wenn nötig mit wenig Stärke binden.",
+      "In einer großen beschichteten Pfanne die roten Zwiebeln in Olivenöl kurz glasig dünsten. Gurkenscheiben zugeben und mit Currypulver würzen.",
+      "Zum Schluss Thai-Basilikum und Limonensaft zugeben und mit Salz und Pfeffer abschmecken. Rippchen mit Sauce und Zwiebel-Gurken-Gemüse servieren."
+    ],
+    "tips": [
+      "Der Bräter sollte groß genug sein, damit die Rippchen nebeneinander liegen und von allen Seiten bräunen können.",
+      "Beim Schmoren gut abdecken, damit möglichst wenig Flüssigkeit verdunstet."
+    ],
+    "source": "Süddeutsche Zeitung Magazin – Geschmorte Rippchen mit Currygurken",
+    "tags": [
+      "Fleisch & Schmorgerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R026",
+    "title": "Lamm-Cassoulet mit Thymianbröseln",
+    "category": "Fleisch & Geflügel",
+    "description": "Südfranzösischer Schmortopf mit Lamm, Würstchen, Bohnen und knusprigen Kräuterbröseln.",
+    "servings": "6 Portionen",
+    "prepTime": "30 Min.",
+    "cookTime": "170 Min.",
+    "temperature": "180 °C · Umluft nicht geeignet · untere Schiene",
+    "ingredients": [
+      "ca. 1,6 kg Lammkeule mit Knochen",
+      "250 g Schalotten",
+      "600 g kleine festkochende Kartoffeln",
+      "3 EL Olivenöl",
+      "Salz",
+      "Pfeffer",
+      "1 TL gerebeltes Bohnenkraut",
+      "800 ml Fleischbrühe",
+      "6 Bratwürste, Lamm oder Schwein",
+      "3 EL Öl",
+      "2 Knoblauchzehen",
+      "1 Dose weiße Bohnen, 720 g",
+      "200 g grüne Bohnen, TK",
+      "abgeriebene Schale von ½ Bio-Zitrone",
+      "1 Msp. gerebelter Thymian",
+      "1 Bund Petersilie",
+      "6 EL Semmelbrösel",
+      "40 g Butter"
+    ],
+    "steps": [
+      "Lammkeule putzen, Knochen auslösen und Fleisch grob würfeln. Schalotten würfeln, Kartoffeln schälen. Öl in einem Bräter erhitzen und Fleisch rundum anbraten. Schalotten und Kartoffeln mitbraten. Würzen, Bohnenkraut und ausgelösten Knochen zugeben und etwa 2 Minuten schmoren.",
+      "Backofen auf 180 °C vorheizen; Umluft ist nicht geeignet. Fleischbrühe angießen und aufkochen. Bräter zudecken und auf der unteren Schiene etwa 90 Minuten garen.",
+      "Bratwürste in Öl anbraten. Knoblauch würfeln, weiße Bohnen abbrausen. Alles zum Lamm geben und weitere 60 Minuten garen.",
+      "Grüne Bohnen in Salzwasser etwa 2 Minuten kochen und mit Zitronenschale zum Lamm geben. Knochen entfernen.",
+      "Kräuter mit Semmelbröseln pürieren, in Butter rösten und salzen. Thymianbrösel über das Lamm streuen und servieren."
+    ],
+    "tips": [
+      "Brösel erst am Tisch darübergeben, damit sie kross bleiben."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Fleisch & Eintöpfe"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R027",
+    "title": "Rehgulasch mit Pfifferlingen",
+    "category": "Fleisch & Geflügel",
+    "description": "Zart geschmortes Reh in Portwein-Rotwein-Sud mit Pfifferlingen und Perlzwiebeln.",
+    "servings": "4 Portionen",
+    "prepTime": "ca. 30–40 Min.",
+    "cookTime": "ca. 90 Min. Schmoren",
+    "temperature": "Herd · sanft schmoren",
+    "ingredients": [
+      "1 kg Rehfleisch aus der Keule",
+      "170 g durchwachsener Speck",
+      "150 g Zwiebeln",
+      "1 Bund Thymian",
+      "2 EL Butterschmalz",
+      "1 Flasche Rotwein, 0,7 l, ersatzweise Brühe",
+      "3 Lorbeerblätter",
+      "Salz",
+      "frisch gemahlener Pfeffer",
+      "250 g Pfifferlinge",
+      "1 TL Kümmel",
+      "200 g saure Sahne",
+      "Zucker zum Abschmecken",
+      "optional 1 EL dunkler Soßenbinder"
+    ],
+    "steps": [
+      "Rehfleisch trocken tupfen und in etwa 3 cm große Würfel schneiden. Speck und Zwiebeln fein würfeln. Die Hälfte der Thymianstängel zu einem kleinen Strauß binden.",
+      "Die Hälfte des Specks in einem weiten Schmortopf im heißen Butterschmalz ausbraten. Rehfleisch zugeben und rundum braun anbraten. Den austretenden Fleischsaft vollständig verkochen lassen.",
+      "Zwiebeln kurz mitbraten. Rotwein, Lorbeerblätter und Thymiansträußchen zugeben, salzen und pfeffern. Aufkochen und etwa 90 Minuten schmoren.",
+      "Pfifferlinge putzen und bei Bedarf halbieren. Restlichen Speck ausbraten und die Pilze darin braun braten. Mit Kümmel, Salz und Pfeffer würzen.",
+      "Pilz-Speck-Mischung zum Gulasch geben. Saure Sahne unterrühren und aufkochen. Mit Salz, Pfeffer und etwas Zucker abschmecken. Falls nötig mit Soßenbinder leicht binden.",
+      "Restliche Thymianblättchen darüberstreuen und servieren."
+    ],
+    "tips": [
+      "Dazu passen Nudeln oder Semmelklöße."
+    ],
+    "source": "BRIGITTE – Rehgulasch mit Pfifferlingen",
+    "tags": [
+      "Gulasch",
+      "Wild & Schmorgerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R029",
+    "title": "Roastbeef Brazilian Style",
+    "category": "Fleisch & Geflügel",
+    "description": "Saftig-rosa Roastbeef mit Kräuterkruste und aromatischer Salz-Knoblauch-Lake.",
+    "servings": "12 Portionen",
+    "prepTime": "20 Min. + 60 Min. temperieren",
+    "cookTime": "60–90 Min.",
+    "temperature": "Grill · indirekte mittlere Hitze · Deckel geschlossen",
+    "ingredients": [
+      "2,5 kg Roastbeef mit Fettrand",
+      "5 EL Senf",
+      "6 Knoblauchzehen",
+      "300 g grobkörniges Bergsalz oder grobes Meersalz",
+      "6 Stiele glatte Petersilie",
+      "½ Bund Koriandergrün",
+      "6 Thymianzweige",
+      "4 Stiele Basilikum",
+      "Pfeffer",
+      "1 l Wasser"
+    ],
+    "steps": [
+      "Roastbeef trocken tupfen, mit Senf bestreichen und bei Zimmertemperatur etwa 60 Minuten ruhen lassen. Knoblauch andrücken und mit Salz in 1 l Wasser geben. Lake etwa 60 Minuten ziehen lassen.",
+      "Roastbeef bei indirekter mittlerer Hitze und geschlossenem Deckel 60–90 Minuten grillen. Alle 15 Minuten mit Salz-Knoblauch-Lake bepinseln und wenden.",
+      "Nach etwa 60 Minuten Kerntemperatur prüfen. Bei 54 °C ist das Fleisch medium.",
+      "Kräuter fein hacken. Roastbeef vom Grill nehmen, mit Kräutern bedecken, in Alufolie wickeln und etwa 5 Minuten ruhen lassen. Danach mit Pfeffer würzen und servieren."
+    ],
+    "tips": [
+      "Optional ganze Knoblauchknollen etwa 30 Minuten am Rand der Glut mitgrillen."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Grillen & Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R030",
+    "title": "Tomahawk-Steak mit Tomaten-Salsa",
+    "category": "Fleisch & Geflügel",
+    "description": "Ein mächtiges Steak mit fruchtig-scharfer Tomatensalsa, Limette und Kräutern.",
+    "servings": "6 Portionen",
+    "prepTime": "60 Min.",
+    "cookTime": "25 Min.",
+    "temperature": "Grill · indirekte mittlere bis starke Hitze · Deckel geschlossen",
+    "ingredients": [
+      "700 g rote und gelbe Tomaten",
+      "15 g Ingwer",
+      "2 Zwiebeln",
+      "5 Knoblauchzehen",
+      "3 Chilischoten",
+      "½ Bund Koriandergrün",
+      "8 Stiele Basilikum",
+      "1 Bio-Limette",
+      "150 ml Olivenöl",
+      "Meersalz",
+      "Pfeffer",
+      "1 Tomahawk- oder T-Bone-Steak, ca. 1,2 kg",
+      "50–70 g Butter",
+      "Kräuter zum Garnieren"
+    ],
+    "steps": [
+      "Tomaten klein würfeln. Ingwer schälen. Zwiebeln, Knoblauch, Chili und Kräuter fein hacken. Limettenschale fein abreiben. Alles mit Olivenöl vermengen und etwa 30 Minuten ziehen lassen. Mit Salz und Pfeffer abschmecken.",
+      "Steak trocken tupfen und kräftig mit Salz und Pfeffer würzen. Bei indirekter mittlerer bis starker Hitze und geschlossenem Deckel etwa 20 Minuten garen.",
+      "Steak vom Grill nehmen und mit Butter in Alufolie wickeln. Wieder auf den Grill legen und bei geschlossenem Deckel weitere 5 Minuten garen.",
+      "Kurz ruhen lassen, auswickeln, mit Kräutern garnieren und mit Tomaten-Salsa servieren."
+    ],
+    "tips": [
+      "Dazu passen Potato Wedges."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Grillen & Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R034",
+    "title": "Pochierte Eier auf Toast mit Kräuter-Senf-Hollandaise",
+    "category": "Frühstück & Eiergerichte",
+    "description": "Toast mit Schinken, Spinat, pochiertem Ei und cremiger Kräuter-Hollandaise.",
+    "servings": "4 Portionen",
+    "prepTime": "ca. 40 Min.",
+    "cookTime": "",
+    "temperature": "Hollandaise im Wasserbad bei ca. 75–80 °C",
+    "ingredients": [
+      "8 Eier",
+      "2 Eigelb",
+      "2–3 EL Weißweinessig",
+      "1 Schalotte",
+      "6–8 Pfefferkörner",
+      "200 g geklärte Butter",
+      "50 g gemischte Kräuter",
+      "2–3 TL Senf",
+      "1–2 EL Zitronensaft",
+      "150 g Babyspinat",
+      "4 Toastbrötchen",
+      "8 Scheiben Kochschinken",
+      "Salz",
+      "Pfeffer",
+      "Cayennepfeffer",
+      "Muskat"
+    ],
+    "steps": [
+      "Für die Reduktion Schalotte und Pfefferkörner mit Essig und etwas Wasser aufkochen und auf etwa die Hälfte reduzieren. Durch ein feines Sieb passieren.",
+      "Spinat putzen und in wenig Fett nur kurz zusammenfallen lassen. Mit Salz, Pfeffer und Muskat würzen. Kräuter fein hacken.",
+      "Für die Hollandaise Eigelb mit der Reduktion über einem etwa 75–80 °C heißen Wasserbad dickcremig aufschlagen.",
+      "Warme geklärte Butter zuerst tropfenweise, dann in einem dünnen Strahl unterschlagen, bis eine cremige Hollandaise entstanden ist. Kräuter und Senf einrühren und mit Zitronensaft, Salz, Pfeffer und Cayenne abschmecken.",
+      "Eier in siedendem Wasser mit Essig etwa 5 Minuten pochieren.",
+      "Toast rösten, mit Kochschinken und Spinat belegen, pochierte Eier daraufsetzen und mit der Kräuter-Senf-Hollandaise überziehen. Sofort servieren."
+    ],
+    "tips": [
+      "Butter warm, aber nicht heiß einarbeiten. Die Hollandaise nicht zu stark erhitzen, damit das Eigelb nicht gerinnt."
+    ],
+    "source": "Originalfoto des Familienrezepts",
+    "tags": [
+      "Frühstück & Brunch"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R036",
+    "title": "Bratenjus (Grundrezept)",
+    "category": "Beilagen & Saucen",
+    "description": "Rosa Entenbrust mit asiatischer Jus, Apfel-Curry-Creme und Sesamspinat.",
+    "servings": "ca. 400 ml",
+    "prepTime": "ca. 40 Min.",
+    "cookTime": "3–4 Std.",
+    "temperature": "Herd",
+    "ingredients": [
+      "ca. 25 g Butterschmalz",
+      "2 kg Kalbsknochen, vom Metzger in Stücke gesägt",
+      "2 Möhren",
+      "150 g Knollensellerie",
+      "2 Zwiebeln",
+      "1 Lauchstange",
+      "2 EL Tomatenmark",
+      "500 ml Rotwein",
+      "4–6 Wacholderbeeren, angedrückt",
+      "2–3 Gewürznelken",
+      "1 EL Pfefferkörner, zerstoßen",
+      "2–3 Lorbeerblätter",
+      "3–4 Thymianzweige",
+      "2–3 Rosmarinzweige",
+      "2 l kaltes Wasser",
+      "Salz",
+      "Pfeffer"
+    ],
+    "steps": [
+      "Butterschmalz erhitzen und Kalbsknochen unter gelegentlichem Umrühren etwa 10 Minuten kräftig rösten.",
+      "Gemüse grob würfeln, zugeben und weitere 10 Minuten rösten. Tomatenmark mitrösten, bis sich ein dunkler Bratensatz bildet.",
+      "Mit etwa einem Drittel Rotwein ablöschen, Bratensatz lösen und Wein fast vollständig einkochen. Wiederholen, bis der Rotwein verbraucht ist.",
+      "2 l kaltes Wasser und Gewürze zugeben. Bei reduzierter Hitze etwa 3 Stunden köcheln lassen und aufsteigenden Schaum abschöpfen.",
+      "Durch ein feines Sieb passieren und auf etwa 400 ml einkochen. Mit Salz und Pfeffer abschmecken."
+    ],
+    "tips": [
+      "Stärker reduziert wird aus der Jus eine Glace."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Geflügel & Festtagsküche"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R037",
+    "title": "Zwiebelsuppe mit Käse-Brot-Kruste",
+    "category": "Suppen & Eintöpfe",
+    "description": "Langsam geschmorte Zwiebeln in kräftiger Brühe, überbacken mit Baguette und Käse.",
+    "servings": "4 Portionen · 4 ofenfeste Suppentassen",
+    "prepTime": "ca. 60 Min.",
+    "cookTime": "ca. 12 Min. überbacken",
+    "temperature": "Backofengrill · mittlere Schiene",
+    "ingredients": [
+      "400 g große milde Zwiebeln",
+      "50 g Butter",
+      "1 EL Zucker",
+      "1 Baguette-Brot",
+      "100–120 g Emmentaler",
+      "1–2 Lauchzwiebeln",
+      "500–600 ml kräftige Fleischbrühe",
+      "Salz",
+      "Pfeffer"
+    ],
+    "steps": [
+      "Zwiebeln halbieren und fein schneiden. Butter in einem großen Topf zerlassen, Zwiebeln andünsten, mit Zucker bestreuen und karamellisieren lassen. Hitze reduzieren und etwa 40 Minuten langsam goldbraun und weich schmoren.",
+      "Brot in etwa 5 mm dünne Scheiben schneiden. Käse fein raspeln. Lauchzwiebeln in sehr feine Ringe schneiden.",
+      "Brühe zu den Zwiebeln geben und kräftig abschmecken. Backofengrill vorheizen. Suppe in ofenfeste Tassen verteilen, mit Lauchzwiebeln bestreuen, Brotscheiben leicht überlappend auflegen und Käse darüberstreuen.",
+      "Auf der mittleren Schiene etwa 12 Minuten goldbraun und knusprig überbacken."
+    ],
+    "tips": [
+      "Originalrezept: Emmentaler. Alternativ eignen sich Gouda, Tilsiter, Cheddar oder kräftigere Hartkäse.",
+      "Mozzarella kann wässern; dann am besten mit geriebenem Hartkäse mischen."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Brot",
+      "Suppe",
+      "Suppen & französische Klassiker"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R038",
+    "title": "Gyros mit Zaziki",
+    "category": "Fleisch & Geflügel",
+    "description": "Klassisches Zaziki aus cremigem Joghurt, Gurke, Knoblauch, Dill, Minze und Zitrone.",
+    "servings": "4 Portionen",
+    "prepTime": "ca. 50 Min. + 2–3 Std. Marinierzeit",
+    "cookTime": "ca. 10 Min.",
+    "temperature": "Herd",
+    "ingredients": [
+      "600 g Schweinefleisch, am besten aus der Keule",
+      "4 Knoblauchzehen",
+      "1 rote Zwiebel",
+      "6 EL Olivenöl",
+      "1 EL getrockneter Thymian",
+      "1 EL getrockneter Oregano",
+      "2–3 TL Paprikapulver, rosenscharf",
+      "Pfeffer",
+      "1 Salatgurke",
+      "Salz",
+      "200 g griechischer Joghurt",
+      "je 3–4 Stiele Dill und Minze",
+      "1–2 EL Zitronensaft"
+    ],
+    "steps": [
+      "Fleisch in etwa 1 cm breite Streifen schneiden. Zwiebel fein schneiden, Knoblauch fein würfeln. Olivenöl, Kräuter, Paprikapulver und etwa die Hälfte des Knoblauchs verrühren. Fleisch und Zwiebeln darin wenden, pfeffern und 2–3 Stunden kalt marinieren.",
+      "Gurke schälen, längs halbieren, Kerne herauskratzen, grob raspeln, salzen und etwa 15 Minuten Saft ziehen lassen.",
+      "Gurkenraspel ausdrücken und mit Joghurt mischen. Dill und Minze fein hacken, mit restlichem Knoblauch unterrühren und mit Salz, Pfeffer und Zitronensaft abschmecken.",
+      "Große Pfanne ohne zusätzliches Fett erhitzen. Fleisch samt Marinade scharf anbraten und bei mittlerer Hitze etwa 10 Minuten garen. Mit Salz und Pfeffer abschmecken und mit Zaziki servieren."
+    ],
+    "tips": [
+      "Als Beilage passt Fladenbrot."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Griechische Küche"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R039",
+    "title": "Orientalischer Fischtopf",
+    "category": "Fisch & Meeresfrüchte",
+    "description": "Kabeljau und Barsch in würziger Tomatensauce mit getrockneter Zitrone und Gewürzen.",
+    "servings": "4 Portionen",
+    "prepTime": "20 Min.",
+    "cookTime": "30 Min.",
+    "temperature": "Herd",
+    "ingredients": [
+      "2 Zwiebeln",
+      "1 Knoblauchzehe",
+      "700 g Tomaten",
+      "3 EL Olivenöl",
+      "40 g Weißbrot vom Vortag",
+      "1 getrocknete Zitrone, ersatzweise frische Zitrone",
+      "1 große Gewürznelke",
+      "frisch geriebene Muskatnuss",
+      "1 TL Currypulver",
+      "½ TL gemahlener Koriander",
+      "1 Msp. Cayennepfeffer",
+      "500 g gemischtes weißes Fischfilet, z. B. Kabeljau oder Barsch",
+      "400 ml Wasser",
+      "Salz",
+      "Pfeffer"
+    ],
+    "steps": [
+      "Zwiebeln und Knoblauch vorbereiten. Tomaten kurz in kochendem Wasser blanchieren, abschrecken, häuten, vierteln, entkernen und das Fruchtfleisch in Stücke schneiden.",
+      "Olivenöl in einem breiten Topf erhitzen. Zwiebeln und Knoblauch bei kleiner Hitze etwa 10 Minuten zugedeckt dünsten.",
+      "Brot fein zerkrümeln. Getrocknete Zitrone mehrmals einstechen. Gewürze und Brot zugeben und anrösten. Zitrone, 400 ml Wasser und Tomaten zugeben und zugedeckt etwa 15 Minuten köcheln lassen.",
+      "Fisch trocken tupfen, Gräten entfernen und in etwa 5 cm große Stücke schneiden. Salzen, auf das Gemüse legen und bei kleiner Hitze etwa 4 Minuten garen.",
+      "Mit Salz und Pfeffer abschmecken und vor dem Servieren die getrocknete Zitrone entfernen."
+    ],
+    "tips": [
+      "Dazu passt Basmatireis."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Fisch",
+      "Fisch & orientalische Küche"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R040",
+    "title": "Schweinebraten aus dem Ofen",
+    "category": "Fleisch & Geflügel",
+    "description": "Schulterbraten mit Anis, Thymian, Honig, dunklem Bier und Wurzelgemüse.",
+    "servings": "6 Portionen",
+    "prepTime": "",
+    "cookTime": "ca. 2 Std.",
+    "temperature": "150 °C · Umluft nicht geeignet; später 200 °C",
+    "ingredients": [
+      "4 Knoblauchzehen",
+      "200 g Schalotten",
+      "2 kleine Kohlrabi",
+      "ca. 300 g Knollensellerie",
+      "400 g Möhren",
+      "1 Petersilienwurzel",
+      "1 Stange Lauch",
+      "2,5 kg Schweinebraten aus der Schulter",
+      "Salz",
+      "Pfeffer",
+      "3 EL Öl",
+      "3 Pimentkörner",
+      "1 TL Anissamen",
+      "1 Bund Thymian",
+      "330 ml dunkles Bier",
+      "400 ml Gemüsefond",
+      "1 EL Speisestärke",
+      "Saft und Schale von 1 Bio-Zitrone",
+      "2 EL Honig"
+    ],
+    "steps": [
+      "Knoblauch und Schalotten vorbereiten. Kohlrabi, Sellerie, Möhren, Petersilienwurzel und Lauch putzen und schneiden. Helle und grüne Lauchstücke getrennt halten.",
+      "Schweinebraten trocken tupfen, falls nötig binden und mit Salz und Pfeffer einreiben. Backofen auf 150 °C vorheizen; Umluft ist nicht geeignet. Öl im Bräter erhitzen, Fleisch rundum anbraten und herausnehmen. Die Hälfte von Kohlrabi, Sellerie und Möhren sowie die grünen Lauchstücke im Bratfett anbraten.",
+      "Fleisch wieder einlegen. Knoblauch, Petersilienwurzel, Piment, Anis und die Hälfte des Thymians zugeben. Mit Bier und 100 ml Gemüsefond ablöschen. Bräter abdecken und etwa 1½ Stunden schmoren. Nach und nach restlichen Fond angießen.",
+      "Braten herausnehmen. Sauce durchs Sieb gießen und 100 ml beiseitestellen. Übrige Sauce zurückgeben und aufkochen. Speisestärke mit 1–2 EL kaltem Wasser anrühren und Sauce binden. Braten, restliches Gemüse, weiße Lauchstücke, Zitronensaft und -schale zugeben und weitere 20 Minuten schmoren.",
+      "Beiseitegestellte 100 ml Sauce mit Honig dickflüssig einkochen. Ofen auf 200 °C erhöhen. Braten mit Honigsauce bestreichen, übrigen Thymian daraufgeben und weitere 10–15 Minuten braten.",
+      "Sauce abschmecken, Fleisch in Scheiben schneiden und mit Gemüse und Sauce servieren."
+    ],
+    "tips": [
+      "Dazu passen Kartoffeln."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Schwedische Küche & Ofengerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R041",
+    "title": "Heidelbeer-Käse-Tarte",
+    "category": "Kuchen & Torten",
+    "description": "Mürbeteig mit Vanille-Quark-Füllung, Heidelbeeren und Limetten-Minz-Zucker.",
+    "servings": "12 Stücke · Tarte- oder Springform ca. Ø 28 cm",
+    "prepTime": "",
+    "cookTime": "ca. 50 Min.",
+    "temperature": "180 °C Ober-/Unterhitze oder 160 °C Umluft",
+    "ingredients": [
+      "250 g Mehl",
+      "1 Prise Salz",
+      "275 g Zucker",
+      "1 Eigelb",
+      "3 Eier, Größe M",
+      "200 g Butter",
+      "Saft und Schale von ½ Bio-Limette",
+      "650 g Magerquark",
+      "Mark von 1 Vanilleschote",
+      "2 EL Vanille-Puddingpulver",
+      "150 g Schlagsahne",
+      "600 g Heidelbeeren",
+      "einige Stiele Minze",
+      "grober brauner Zucker"
+    ],
+    "steps": [
+      "Mehl, Salz und 100 g Zucker mischen. Eigelb mit 1 EL kaltem Wasser verquirlen. Mit 125 g kalter Butter in Würfeln zum Mehl geben und glatt verkneten. Form mit Backpapier auslegen, Teig hineinlegen und einen Rand hochziehen. Etwa 30 Minuten kalt stellen.",
+      "Restliche 75 g Butter schmelzen. Limettensaft und -schale mit Quark, 3 Eiern, restlichem Zucker, Vanillemark, Puddingpulver und flüssiger Butter verrühren. Sahne steif schlagen und vorsichtig unterheben.",
+      "Backofen auf 180 °C Ober-/Unterhitze oder 160 °C Umluft vorheizen. Creme auf dem Teig verstreichen und etwa 50 Minuten backen.",
+      "Tarte aus dem Ofen nehmen und in der Form auf einem Kuchengitter vollständig erkalten lassen.",
+      "Heidelbeeren verlesen, abbrausen und gut abtropfen lassen. Tarte aus der Form lösen und Beeren darauf verteilen. Minzeblättchen mit 2–3 EL grobem braunem Zucker im Mörser zerstoßen und darüberstreuen."
+    ],
+    "tips": [
+      "Erst vollständig auskühlen lassen, bevor Konfitüre und Beeren aufgelegt werden."
+    ],
+    "source": "Fotografierte Rezeptvorlage",
+    "tags": [
+      "Kuchen & Sommerdesserts"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R046",
+    "title": "Kalbsmedaillons mit Zitronenbutter",
+    "category": "Fleisch & Geflügel",
+    "description": "Kurz gebratene Kalbsmedaillons mit Kapern, Petersilie und Zitronenbutter.",
+    "servings": "4 Personen",
+    "prepTime": "ca. 10–15 Min.",
+    "cookTime": "ca. 10 Min.",
+    "temperature": "Herd · kräftig anbraten",
+    "ingredients": [
+      "600 g Kalbsfilet",
+      "3 EL Olivenöl",
+      "1 unbehandelte Zitrone",
+      "1 TL frischer Thymian",
+      "4 Stängel glatte Petersilie",
+      "1 EL eingelegte Kapern",
+      "100 g schwarze entsteinte Oliven",
+      "Salz",
+      "Pfeffer",
+      "50 g Butter",
+      "1 TL getrockneter Oregano",
+      "2 TL Honig"
+    ],
+    "steps": [
+      "Zitrone heiß abwaschen. Drei Streifen Schale dünn abschälen und in sehr feine Streifen schneiden. Zitrone halbieren und auspressen.",
+      "Kräuter waschen und trocken tupfen. Thymianblätter abzupfen, Petersilie und Thymian hacken. Kapern abspülen, Oliven halbieren.",
+      "Kalbsfilet in etwa 2 cm dicke Medaillons schneiden und mit dem Handballen etwas flach drücken.",
+      "Olivenöl in einer Pfanne erhitzen und die Medaillons von jeder Seite genau etwa 2½ Minuten anbraten.",
+      "Kapern, Oliven und Zitronenschale zugeben und kurz mitbraten. Salzen und pfeffern, Zitronensaft angießen.",
+      "Pfanne vom Herd ziehen. Butter, Kräuter, Oregano und Honig unterrühren und die Medaillons sofort servieren."
+    ],
+    "tips": [
+      "Dazu passen Risotto- oder Salzkartoffeln und grüner Salat. Statt Filet können auch Medaillons aus dem Rücken verwendet werden."
+    ],
+    "source": "Kontrollgemeinschaft Deutsches Kalbfleisch – Kalbsmedaillons",
+    "tags": [
+      "Kalb & schnelle Pfannengerichte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R050",
+    "title": "Nussgugelhupf",
+    "category": "Kuchen & Torten",
+    "description": "Ein saftiger Nussgugelhupf mit Rum und lockerer Rührteigstruktur.",
+    "servings": "1 Gugelhupfform Ø 22 cm",
+    "prepTime": "ca. 15 Min.",
+    "cookTime": "ca. 55 Min.",
+    "temperature": "175 °C Heißluft",
+    "ingredients": [
+      "10 g Butter für die Form",
+      "10 g Semmelbrösel für die Form",
+      "5 Eier",
+      "200 g Zucker",
+      "16 g Vanillezucker",
+      "125 g Öl",
+      "10 g Rum",
+      "125 g Wasser",
+      "200 g Weizenmehl Type 700",
+      "150 g gemahlene Nüsse",
+      "16 g Backpulver"
+    ],
+    "steps": [
+      "Butter in die Gugelhupfform geben. Backofen zunächst auf 50 °C erwärmen und die Form hineinstellen, bis die Butter weich ist. Form damit auspinseln und mit Semmelbröseln ausstreuen.",
+      "Eier mit Zucker und Vanillezucker hell und cremig aufschlagen.",
+      "Öl, Rum und Wasser langsam einfließen lassen und unterrühren.",
+      "Mehl, gemahlene Nüsse und Backpulver mischen und nur kurz unterheben, bis alles gerade eben verbunden ist.",
+      "Teig in die vorbereitete Form füllen und im vorgeheizten Ofen bei 175 °C Heißluft etwa 55 Minuten backen.",
+      "Etwas auskühlen lassen, vorsichtig aus der Form stürzen und vollständig abkühlen lassen."
+    ],
+    "tips": [
+      "Nach Zugabe von Mehl, Nüssen und Backpulver nur kurz rühren."
+    ],
+    "source": "Backen mit Christina – Nussgugelhupf",
+    "tags": [
+      "Kuchen & Mehlspeisen"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R051",
+    "title": "Pizzateig mit Biga",
+    "category": "Pasta, Pizza & Teigwaren",
+    "description": "Sehr aromatischer Pizzateig mit trocken geführtem italienischem Biga-Vorteig.",
+    "servings": "6 Pizzen à ca. 280 g",
+    "prepTime": "ca. 180 Min. aktiv + Reifezeiten",
+    "cookTime": "",
+    "temperature": "Pizzaofen / möglichst hohe Temperatur",
+    "ingredients": [
+      "Biga: 1000 g Pizzamehl Tipo 00",
+      "Biga: 500 g kaltes Wasser",
+      "Biga: 4 g Hefe",
+      "Hauptteig: reifer Biga",
+      "Hauptteig: 150 g Wasser",
+      "Hauptteig: 25 g Salz",
+      "Hauptteig: 25 g Olivenöl",
+      "Semola zum Formen"
+    ],
+    "steps": [
+      "Für den Biga die Hefe im kalten Wasser vollständig auflösen. Pizzamehl zugeben und mit den Händen nur locker vermengen. Nicht auskneten: Die Masse soll grob, stückig und faserig bleiben.",
+      "Biga abgedeckt zunächst etwa 30 Minuten bei Raumtemperatur anspringen lassen und anschließend etwa 24 bis maximal 48 Stunden im Kühlschrank reifen lassen.",
+      "Reifen Biga mit 150 g Wasser, Salz und Olivenöl in die Knetschüssel geben und etwa 5–7 Minuten zu einem glatten, geschmeidigen Pizzateig kneten.",
+      "Teig in eine leicht geölte Teigwanne geben und abgedeckt kalt reifen lassen. Während der Stockgare zweimal dehnen und falten.",
+      "Teig in sechs Portionen à etwa 280 g teilen und zu Ballen formen. Möglichst wenig zusätzliches Mehl verwenden.",
+      "Ballen in eine leicht geölte Pizzaballenbox legen und für besonders viel Aroma nochmals etwa 24 Stunden kalt reifen lassen.",
+      "Vor dem Backen rechtzeitig aus dem Kühlschrank nehmen und bei Raumtemperatur akklimatisieren und fertig reifen lassen.",
+      "Teigling mit Semola lösen, von der Mitte nach außen drücken und die Luft im Rand belassen. Nach Wunsch belegen und bei möglichst hoher Temperatur backen."
+    ],
+    "tips": [
+      "Biga beim Ansetzen ausdrücklich nicht kneten.",
+      "65 % Hydration: 650 g Wasser auf 1000 g Mehl.",
+      "Überschüssige Semola vor dem Backen entfernen, damit sie nicht verbrennt."
+    ],
+    "source": "Mann backt – Pizzateig mit Biga",
+    "tags": [
+      "Pizza",
+      "Pizza & Brot"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R052",
+    "title": "Pizza al Ragù / Pizza Bolognese",
+    "category": "Pasta, Pizza & Teigwaren",
+    "description": "Pizza mit lange gekochtem Ragù statt klassischer Tomatensauce.",
+    "servings": "Belag für mehrere Pizzen",
+    "prepTime": "ca. 20 Min.",
+    "cookTime": "Ragù ca. 2 Std.",
+    "temperature": "Pizzaofen / möglichst hohe Temperatur",
+    "ingredients": [
+      "2 große Zwiebeln",
+      "2 Knoblauchzehen, gehackt",
+      "400 g Rinderhack",
+      "400 g Tomaten in Stücken",
+      "50 g Tomatenmark",
+      "Oregano",
+      "Rosmarin",
+      "Basilikum",
+      "Salz",
+      "Pfeffer",
+      "Pizzateig, ideal Biga oder lange gereifter klassischer Pizzateig",
+      "pro Pizza ca. 200–250 g ausgekühltes Ragù",
+      "pro Pizza ca. 150 g Mozzarella"
+    ],
+    "steps": [
+      "Zwiebeln klein schneiden und in etwas Öl anbraten.",
+      "Rinderhack zugeben und ebenfalls kräftig anbraten.",
+      "Tomaten, Tomatenmark, Kräuter und Knoblauch zugeben und gut vermengen. Mit Salz und Pfeffer abschmecken.",
+      "Ragù bei niedriger Temperatur etwa 2 Stunden köcheln lassen und anschließend vollständig auskühlen lassen.",
+      "Pizzateig wie gewohnt ausziehen und mit 200–250 g ausgekühltem Ragù bestreichen.",
+      "Etwas Mozzarella darauf verteilen und bei möglichst hoher Temperatur knusprig backen."
+    ],
+    "tips": [
+      "Das Ragù muss vor dem Belegen ausgekühlt sein. Biga-Teig passt besonders gut."
+    ],
+    "source": "Mann backt – Pizza al Ragù / Pizza Bolognese",
+    "tags": [
+      "Pizza",
+      "Pizza & Brot"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R053",
+    "title": "Pizzateig mit Poolish",
+    "category": "Pasta, Pizza & Teigwaren",
+    "description": "Weicher, aromatischer Pizzateig mit flüssigem Poolish-Vorteig und langer Reife.",
+    "servings": "6 Pizzen à ca. 280 g",
+    "prepTime": "ca. 180 Min. aktiv + Reifezeiten",
+    "cookTime": "",
+    "temperature": "Pizzaofen / möglichst hohe Temperatur",
+    "ingredients": [
+      "Poolish: 200 g Wasser",
+      "Poolish: 1 g frische Hefe",
+      "Poolish: 200 g Weizenmehl Type 00",
+      "Hauptteig: reifer Poolish",
+      "750 g Weizenmehl Type 00",
+      "490 g Wasser",
+      "25 g Salz",
+      "25 g Olivenöl",
+      "optional 2 g frische Hefe"
+    ],
+    "steps": [
+      "Für den Poolish Hefe im Wasser vollständig auflösen. Mehl zugeben und gründlich verrühren.",
+      "Poolish abgedeckt etwa 2 Stunden bei Raumtemperatur anspringen lassen und anschließend 12–24 Stunden im Kühlschrank reifen lassen.",
+      "Reifen Poolish mit den übrigen Zutaten 8–10 Minuten zu einem glatten, elastischen Teig kneten.",
+      "Teig in eine leicht geölte Teigwanne geben und etwa 2 Stunden bei Raumtemperatur reifen lassen. Währenddessen zwei- bis dreimal dehnen und falten.",
+      "In sechs Portionen à etwa 280 g teilen und zu gleichmäßigen Ballen formen.",
+      "Ballen mit Abstand in eine leicht geölte Box legen und abgedeckt etwa 24 Stunden im Kühlschrank reifen lassen.",
+      "Am Backtag 3–4 Stunden bei Raumtemperatur akklimatisieren und fertig reifen lassen.",
+      "Vorsichtig ausformen, nach Wunsch belegen und bei möglichst hoher Temperatur backen."
+    ],
+    "tips": [
+      "Hydration ca. 73 %. Der Hauptteig soll während der Stockgare mehrfach gedehnt und gefaltet werden."
+    ],
+    "source": "Mann backt – Pizzateig mit Poolish",
+    "tags": [
+      "Pizza",
+      "Pizza & Brot"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R054",
+    "title": "Eierlikörtorte",
+    "category": "Kuchen & Torten",
+    "description": "Saftiger Mandel-Schoko-Boden mit Sahne und cremigem Eierlikör.",
+    "servings": "Backform ca. Ø 24 cm",
+    "prepTime": "ca. 35 Min.",
+    "cookTime": "ca. 30 Min. + Auskühlen/Kühlen",
+    "temperature": "Im veröffentlichten Rezepttext nicht angegeben",
+    "ingredients": [
+      "100 g Vollmilchschokolade",
+      "4 Eier, Größe L",
+      "100 g Zucker",
+      "60 g weiche Butter",
+      "1 Päckchen Vanillezucker",
+      "1 Prise Salz",
+      "200 g gemahlene Mandeln",
+      "25 g Mehl",
+      "1 gestrichener TL Backpulver",
+      "1 Schuss Eierlikör",
+      "750 ml Sahne",
+      "50 g Zucker für die Sahne",
+      "1 Päckchen Sahnesteif",
+      "Eierlikör zum Übergießen",
+      "optional 2 Blatt Gelatine",
+      "optional ca. 150 ml Eierlikör für die Gelatine-Variante"
+    ],
+    "steps": [
+      "Schokolade fein hacken und Eier trennen.",
+      "Butter, Zucker, Vanillezucker, Salz und Eigelbe schaumig mixen.",
+      "Eiweiß zu cremigem Schnee schlagen. Mandeln, Mehl und Backpulver mischen.",
+      "Eischnee, Eigelbmasse, gehackte Schokolade und Mandel-Mehl-Mischung vorsichtig miteinander verbinden.",
+      "Masse in eine etwa 24 cm große Backform füllen, glatt streichen und etwa 30 Minuten goldgelb backen. Vollständig auskühlen lassen.",
+      "Sahne mit 50 g Zucker cremig schlagen, Sahnesteif zugeben und nochmals kurz mixen.",
+      "Torte mit Sahne einstreichen. Restliche Sahne in einen Spritzbeutel mit Lochtülle geben und am Rand Tupfen aufdressieren.",
+      "Nach Wunsch Schokospäne auf die Sahnetupfen geben und Eierlikör in die Mitte gießen.",
+      "Optional für einen schnittfesten Eierlikör: 2 Blatt Gelatine in kaltem Wasser einweichen, ca. 150 ml Eierlikör leicht erwärmen und Gelatine darin auflösen. Auf die Torte geben und etwa 2 Stunden kalt stellen."
+    ],
+    "tips": [
+      "Die Quelle nennt im veröffentlichten Rezepttext keine Backtemperatur. Diese wird deshalb nicht ergänzt oder geraten."
+    ],
+    "source": "Mann backt – Eierlikörtorte",
+    "tags": [
+      "Kuchen & Torten",
+      "Torte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R055",
+    "title": "Pasta selbst machen",
+    "category": "Pasta, Pizza & Teigwaren",
+    "description": "Kräftiger frischer Nudelteig aus Semola, Eiern und Eigelb.",
+    "servings": "ca. 8 Portionen",
+    "prepTime": "25 Min. + 30 Min. Ruhezeit",
+    "cookTime": "ca. 10 Min.",
+    "temperature": "Herd · kochendes Salzwasser",
+    "ingredients": [
+      "500 g Semola / Hartweizenmehl",
+      "2 Eier, Größe L, ca. 120 g",
+      "80 g Eigelb",
+      "zusätzlich Semola zum Bestäuben"
+    ],
+    "steps": [
+      "Semola, ganze Eier und Eigelb zunächst grob vermengen und anschließend zu einem festen Teig kneten.",
+      "Teig gut verpackt 30 Minuten im Kühlschrank ruhen lassen.",
+      "Kleine Stücke abschneiden und zunächst etwas dicker, dann stufenweise immer dünner durch die Nudelmaschine lassen.",
+      "Nach Wunsch mit Nudelaufsatz formen oder sehr dünn ausrollen und mit dem Messer in etwa 3–5 mm breite Bandnudeln schneiden.",
+      "Wenn die Nudeln 2–3 Tage im Kühlschrank gelagert werden sollen, leicht in Semola wenden, damit sie nicht zusammenkleben.",
+      "In reichlich gesalzenem kochendem Wasser etwa 10 Minuten al dente garen."
+    ],
+    "tips": [
+      "Frische Nudeln können gut mit etwas Semola bestäubt 2–3 Tage gekühlt gelagert werden."
+    ],
+    "source": "Mann backt – Pasta selbst machen",
+    "tags": [
+      "Pasta",
+      "Pasta & Grundrezepte"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R056",
+    "title": "Sauerteig-Pizza mit Sven Teichmann",
+    "category": "Pasta, Pizza & Teigwaren",
+    "description": "Luftige Sauerteigpizza für den Haushaltsbackofen mit langer kalter Stückgare.",
+    "servings": "6 Pizzen · Teiglinge à 250–280 g",
+    "prepTime": "30 Min. aktiv + Reifezeiten",
+    "cookTime": "2–3 Min. vorbacken + 3–4 Min. fertigbacken",
+    "temperature": "280 °C Ober-/Unterhitze · Backstahl obere Ofenhälfte",
+    "ingredients": [
+      "Vorteig: 20 g Sauerteig",
+      "Vorteig: 200 g Wasser, ca. 40 °C",
+      "Vorteig: 200 g Pizzamehl Type 00",
+      "Hauptteig: reifer Sauerteig-Vorteig",
+      "800 g Pizzamehl Type 00",
+      "450 g kaltes Wasser",
+      "27 g Salz",
+      "Tomatensauce: 400 g San-Marzano-Tomaten",
+      "Tomatensauce: 5 g Olivenöl",
+      "Tomatensauce: 5 g Salz",
+      "Tomatensauce: 1 Handvoll Basilikumblätter",
+      "Semola zum Formen",
+      "Parmesan",
+      "Mozzarella",
+      "Basilikumblätter",
+      "Olivenöl"
+    ],
+    "steps": [
+      "Sauerteig mit etwa 40 °C warmem Wasser aufschlämmen. Pizzamehl einrühren, bis keine Klumpen mehr vorhanden sind. Vorteig abgedeckt 8–12 Stunden bei Raumtemperatur gären lassen, bis er sich verdoppelt hat.",
+      "Vorteig mit 800 g Pizzamehl, 450 g kaltem Wasser und 27 g Salz gut verkneten.",
+      "Hauptteig abdecken und etwa 1 Stunde bei Raumtemperatur gären lassen. Währenddessen zweimal dehnen und falten.",
+      "Teig in sechs Stücke à 250–280 g portionieren und gleichmäßig rund formen. In eine Gärbox legen und 1 Stunde bei Raumtemperatur gären lassen.",
+      "Gärbox anschließend 12–24 Stunden in den Kühlschrank stellen.",
+      "Für die Tomatensauce Tomaten, Olivenöl, Salz und Basilikum im Cutter oder Blender fein mixen.",
+      "Backofen mit Backstahl in der oberen Ofenhälfte auf 280 °C Ober-/Unterhitze vorheizen, beziehungsweise so heiß wie der Ofen erlaubt.",
+      "Teiglinge aus dem Kühlschrank nehmen und etwa 2 Stunden bei Raumtemperatur akklimatisieren lassen. Mozzarella in etwa 8 mm dicke Streifen schneiden.",
+      "Teiglinge in Semola wenden. Mit den Fingerkuppen von der Mitte nach außen drücken, damit die Luft in den Rand wandert. Wenden und wiederholen, anschließend schonend auseinanderziehen.",
+      "Mit etwas Tomatensauce bestreichen und auf dem heißen Backstahl 2–3 Minuten vorbacken.",
+      "Pizza herausnehmen, mit Basilikum, etwa 5 g Parmesan und Mozzarella belegen. Rand mit wenig Olivenöl bestreichen und weitere 3–4 Minuten goldgelb fertigbacken."
+    ],
+    "tips": [
+      "Kein Nudelholz verwenden; die Luft soll im Rand bleiben."
+    ],
+    "source": "Marcel Paa – Sauerteig-Pizza mit Sven Teichmann",
+    "tags": [
+      "Pizza",
+      "Pizza & Brot"
+    ],
+    "favorite": false,
+    "status": "ready"
+  },
+  {
+    "id": "R057",
+    "title": "Focaccia by Claudio Lo Bello",
+    "category": "Pasta, Pizza & Teigwaren",
+    "description": "Sehr luftige Focaccia mit Poolish, langer Gare und kräftiger Olivenöl-Wasser-Emulsion.",
+    "servings": "1 großes Backblech",
+    "prepTime": "ca. 30 Min. aktiv + lange Reifezeiten",
+    "cookTime": "15–20 Min.",
+    "temperature": "260 °C Ober-/Unterhitze · mittlere Schiene · bedampfen",
+    "ingredients": [
+      "Poolish: 500 g kaltes Wasser",
+      "Poolish: 500 g backstarkes Pizzamehl",
+      "Poolish: 1,5 g Trockenhefe",
+      "Hauptteig: reifer Poolish",
+      "330 g Wasser",
+      "500 g Pizzamehl mit normaler Backstärke",
+      "22 g Salz",
+      "4 g Trockenhefe",
+      "80 g zusätzliches Wasser",
+      "zum Bestreichen: 200 g Olivenöl",
+      "zum Bestreichen: 100 g Wasser",
+      "grobes Salz"
+    ],
+    "steps": [
+      "Poolish-Zutaten in der Küchenmaschine mit Knethaken 2–3 Minuten gut mischen. Zugedeckt 10–12 Stunden bei Raumtemperatur gären lassen.",
+      "Reifen Poolish mit 330 g Wasser und 500 g Pizzamehl mischen. Etwa 30 Minuten zugedeckt bei Raumtemperatur stehen lassen.",
+      "Salz, Hefe und die zusätzlichen 80 g Wasser zugeben und bei mittlerer Geschwindigkeit etwa 15 Minuten kneten.",
+      "Teig in ein gefettetes Becken legen, abdecken und 2–3 Stunden bei Raumtemperatur ruhen lassen.",
+      "Während dieser Zeit den Teig drei- bis viermal von allen Seiten dehnen und falten. Hände dafür am besten leicht anfeuchten.",
+      "Teig nach der Gare vorsichtig auf ein leicht gefettetes Backblech stürzen. Von außen zur Mitte legen und mit den Fingerspitzen leicht andrücken.",
+      "Olivenöl mit 100 g Wasser verrühren. Teig auf dem Blech abdecken und 1 Stunde bei Raumtemperatur stehen lassen.",
+      "Backofen auf 260 °C Ober-/Unterhitze vorheizen. Finger in die Wasser-Öl-Mischung tauchen und überall typische Mulden in den Teig drücken. Mit grobem Salz bestreuen.",
+      "Blech auf die mittlere Schiene geben, Ofen bedampfen und die Focaccia etwa 15–20 Minuten goldbraun ausbacken."
+    ],
+    "tips": [
+      "Sehr schonend mit dem gegarten Teig arbeiten, damit möglichst viel Luft im Teig bleibt."
+    ],
+    "source": "pizza1.de – Focaccia by Claudio Lo Bello",
+    "tags": [
+      "Pizza & Brot"
+    ],
+    "favorite": false,
+    "status": "ready"
+  }
+];
+
+</script>
+<script>
+
+const recipes = window.RECIPES || [];
+const $ = s => document.querySelector(s);
+const grid=$('#grid'), search=$('#search'), category=$('#category'), count=$('#count'), overlay=$('#overlay'), detail=$('#detail');
+let current=null, wakeLock=null;
+const favs = new Set(JSON.parse(localStorage.getItem('cookbook-favs')||'[]'));
+
+function saveFavs(){localStorage.setItem('cookbook-favs',JSON.stringify([...favs]))}
+
+const categoryMeta = [
+  ["Fleisch & Geflügel","🍖"],
+  ["Fisch & Meeresfrüchte","🐟"],
+  ["Pasta, Pizza & Teigwaren","🍝"],
+  ["Reis & Risotto","🍚"],
+  ["Suppen & Eintöpfe","🥣"],
+  ["Salate & Vorspeisen","🥗"],
+  ["Vegetarisch & Gemüse","🥬"],
+  ["Frühstück & Eiergerichte","🍳"],
+  ["Beilagen & Saucen","🥣"],
+  ["Kuchen & Torten","🍰"],
+  ["Desserts & Süßspeisen","🍮"],
+  ["Brot & Gebäck","🥖"],
+  ["Getränke & Liköre","🍸"]
+];
+
+function findCatCount(label){
+  const low=label.toLowerCase();
+  return recipes.filter(r=>r.category.toLowerCase()===low || r.category.toLowerCase().includes(low.split(" & ")[0])).length;
+}
+function renderFeatured(){
+  const picks=["R003","R007","R014"];
+  const list=picks.map(id=>recipes.find(r=>r.id===id)).filter(Boolean);
+  document.querySelector('#featuredGrid').innerHTML=list.map(r=>`
+    <article class="featureCard" onclick="openRecipe('${r.id}')">
+      <img src="${imgPath(r.id)}" alt="${r.title}">
+      <div class="featureCardContent">
+        <span class="badge">${r.id}</span>
+        <h3>${r.title}</h3>
+        <p>${r.category}</p>
+      </div>
+    </article>`).join('');
+}
+function renderCategoryTiles(){
+  const el=document.querySelector('#categoryTiles');
+  el.innerHTML=categoryMeta.map(([name,icon])=>{
+    const matching=recipes.filter(r=>r.category===name || r.category.includes(name.split(" & ")[0]));
+    const count=matching.length;
+    return `<article class="categoryTile" onclick="jumpCategory('${name.replace(/'/g,"\\'")}')">
+      <div class="categoryIcon">${icon}</div>
+      <div><strong>${name}</strong><small>${count} ${count===1?'Rezept':'Rezepte'}</small></div>
+    </article>`;
+  }).join('');
+}
+window.jumpCategory=function(name){
+  const sel=document.querySelector('#category');
+  const exact=[...sel.options].find(o=>o.value===name);
+  if(exact){sel.value=name}
+  else{
+    const key=name.split(" & ")[0].toLowerCase();
+    const opt=[...sel.options].find(o=>o.value.toLowerCase().includes(key));
+    sel.value=opt?opt.value:"";
+  }
+  render();
+  document.querySelector('#alle-rezepte').scrollIntoView({behavior:'smooth'});
+}
+
+function categories(){
+ const cats=[...new Set(recipes.map(r=>r.category))].sort((a,b)=>a.localeCompare(b,'de'));
+ category.innerHTML='<option value="">Alle Kategorien</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+}
+function render(){
+ const q=search.value.trim().toLowerCase(), c=category.value, favOnly=$('#favOnly')?.checked;
+ const list=recipes.filter(r=>{
+   const hay=`${r.id} ${r.title} ${r.category} ${r.description} ${(r.ingredients||[]).join(' ')} ${(r.tags||[]).join(' ')}`.toLowerCase();
+   return (!q||hay.includes(q)) && (!c||r.category===c) && (!favOnly||favs.has(r.id));
+ });
+ count.textContent=`${list.length} von ${recipes.length} Rezepten`;
+ grid.innerHTML=list.map(r=>`
+ <article class="card" onclick="openRecipe('${r.id}')">
+   <div class="cardvisual">
+     ${thumbImg(r)}
+   </div>
+   <div class="cardcontent">
+     <h3>${r.title}</h3>
+   </div>
+ </article>`).join('');
+}
+
+function imgPath(id){ return `images/${id}.jpg`; }
+function thumbImg(r){
+ return `<img class="recipe-thumb" src="${imgPath(r.id)}" alt="${r.title}" loading="lazy"
+ onload="this.parentElement.classList.add('hasimg')"
+ onerror="this.remove()">`;
+}
+
+function iconFor(c){
+ if(/kuchen|torte|süß|dessert|germ/i.test(c)) return '🍰';
+ if(/pizza|brot|flamm/i.test(c)) return '🍕';
+ if(/fisch/i.test(c)) return '🐟';
+ if(/grill/i.test(c)) return '🔥';
+ if(/getränk/i.test(c)) return '🍸';
+ if(/suppe/i.test(c)) return '🥣';
+ if(/salat/i.test(c)) return '🥗';
+ return '🍽️';
+}
+window.toggleFav=id=>{favs.has(id)?favs.delete(id):favs.add(id);saveFavs();render();if(current?.id===id)openRecipe(id)}
+function sourceText(r){return r.source?`<div class="source">Quelle/Grundlage: ${r.source}</div>`:''}
+function ingredientLi(i,idx){return `<li><label><input type="checkbox" class="ingcheck"> <span>${i}</span></label></li>`}
+window.openRecipe=function(id){
+ speechSynthesis.cancel(); current=recipes.find(r=>r.id===id); if(!current)return;
+ const r=current;
+ detail.innerHTML=`
+ <button class="secondary close" onclick="closeRecipe()">✕ Schließen</button>
+ <div class="recipehead"><span class="badge">${r.id}</span><button class="heart big ${favs.has(r.id)?'on':''}" onclick="toggleFav('${r.id}')">${favs.has(r.id)?'♥':'♡'}</button></div>
+ <h2>${r.title}</h2><p class="lead">${r.description}</p>
+ <div class="heroimage"><img src="${imgPath(r.id)}" alt="${r.title}" onload="this.parentElement.classList.add('show')" onerror="this.parentElement.remove()"></div>
+ <div class="meta">${r.servings?`<span>🍽 ${r.servings}</span>`:''}${r.prepTime?`<span>⏱ ${r.prepTime}</span>`:''}${r.cookTime?`<span>🔥 ${r.cookTime}</span>`:''}${r.temperature?`<span>🌡 ${r.temperature}</span>`:''}</div>
+ <div class="actions"><button onclick="speakRecipe()">🔊 Vorlesen</button><button onclick="startCook()">👨‍🍳 Kochmodus</button><button class="secondary" onclick="print()">🖨 Drucken</button></div>
+ <div class="recipebody">
+   <section><h3>Zutaten</h3><ul class="ingredients">${r.ingredients.map(ingredientLi).join('')}</ul></section>
+   <section><h3>Zubereitung</h3><ol class="steps">${r.steps.map((s,i)=>`<li><button class="speakmini" onclick="speakStep(${i})">🔊</button><b>${i+1}.</b> ${s}</li>`).join('')}</ol></section>
+ </div>
+ ${r.tips?.length?`<section class="tip"><h3>Das macht den Unterschied</h3>${r.tips.map(t=>`<p>${t}</p>`).join('')}</section>`:''}
+ ${sourceText(r)}
+ `;
+ overlay.classList.add('open');
+}
+window.closeRecipe=async()=>{speechSynthesis.cancel();overlay.classList.remove('open');current=null;if(wakeLock){try{await wakeLock.release()}catch(e){}wakeLock=null}}
+function speak(txt){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='de-DE';u.rate=.95;speechSynthesis.speak(u)}
+window.speakStep=i=>current&&speak(current.steps[i]);
+window.speakRecipe=()=>current&&speak([current.title,'Zutaten',...current.ingredients,'Zubereitung',...current.steps].join('. '));
+async function keepAwake(){try{if('wakeLock' in navigator)wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}
+window.startCook=async function(){
+ if(!current)return; await keepAwake(); let idx=0, r=current;
+ function paint(){
+  detail.innerHTML=`<div class="cook">
+   <button class="secondary close" onclick="closeRecipe()">✕ Beenden</button>
+   <span class="badge">${r.id} · Schritt ${idx+1}/${r.steps.length}</span>
+   <h2>${r.title}</h2>
+   <div class="stepbox">${r.steps[idx]}</div>
+   <div class="actions">
+    <button class="secondary" ${idx===0?'disabled':''} onclick="_prev()">← Zurück</button>
+    <button onclick="_speakStep()">🔊 Vorlesen</button>
+    <button ${idx===r.steps.length-1?'disabled':''} onclick="_next()">Weiter →</button>
+   </div>
+   <details><summary>Zutaten einblenden</summary><ul class="ingredients compact">${r.ingredients.map(ingredientLi).join('')}</ul></details>
+   <div class="timerbar"><input id="timerMin" type="number" min="1" value="10"><span>Min.</span><button onclick="_timer()">Timer starten</button></div>
+  </div>`;
+ }
+ window._prev=()=>{if(idx>0){idx--;speechSynthesis.cancel();paint()}};
+ window._next=()=>{if(idx<r.steps.length-1){idx++;speechSynthesis.cancel();paint()}};
+ window._speakStep=()=>speak(r.steps[idx]);
+ window._timer=()=>{const m=Number($('#timerMin').value||0);if(m>0){setTimeout(()=>{speak(`Der Timer für ${m} Minuten ist fertig.`);alert(`Timer: ${m} Minuten sind um.`)},m*60000);alert(`Timer für ${m} Minuten gestartet.`)}};
+ paint();
+}
+const heroSearch=document.querySelector('#heroSearch');
+heroSearch.addEventListener('input',()=>{search.value=heroSearch.value;render();});
+heroSearch.addEventListener('keydown',e=>{if(e.key==='Enter'){document.querySelector('#alle-rezepte').scrollIntoView({behavior:'smooth'});}});
+
+search.addEventListener('input',render);category.addEventListener('change',render);$('#favOnly').addEventListener('change',render);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeRecipe()});
+categories();renderFeatured();renderCategoryTiles();render();
+
+</script>
+</body></html>
